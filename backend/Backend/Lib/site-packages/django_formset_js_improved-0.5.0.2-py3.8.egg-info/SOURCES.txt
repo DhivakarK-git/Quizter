@@ -1,0 +1,17 @@
+LICENSE
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+django_formset_js_improved.egg-info/PKG-INFO
+django_formset_js_improved.egg-info/SOURCES.txt
+django_formset_js_improved.egg-info/dependency_links.txt
+django_formset_js_improved.egg-info/not-zip-safe
+django_formset_js_improved.egg-info/requires.txt
+django_formset_js_improved.egg-info/top_level.txt
+djangoformsetjs/__init__.py
+djangoformsetjs/utils.py
+djangoformsetjs/static/js/jquery.formset.js
+djangoformsetjs/static/js/jquery.formset.min.js
+djangoformsetjs/templatetags/__init__.py
+djangoformsetjs/templatetags/formset_tags.py

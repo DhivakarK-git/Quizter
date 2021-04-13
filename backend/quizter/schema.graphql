@@ -1,0 +1,97 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type BelongsType {
+  id: ID!
+  user: UsetType!
+  clas: ClassType!
+}
+
+type ClassType {
+  id: ID!
+  className: String!
+  teachesSet: [TeachesType!]!
+  belongsSet: [BelongsType!]!
+}
+
+input CourseInput {
+  id: ID
+  courseId: String
+  courseName: String
+}
+
+type CourseType {
+  id: ID!
+  courseId: String!
+  courseName: String!
+  teachesSet: [TeachesType!]!
+}
+
+type CreateCourse {
+  ok: Boolean
+  course: CourseType
+}
+
+scalar DateTime
+
+type Mutation {
+  createCourse(input: CourseInput!): CreateCourse
+  updateCourse(id: Int!, input: CourseInput!): UpdateCourse
+}
+
+type Query {
+  course(id: Int): CourseType
+  courses: [CourseType]
+  user(id: Int): UserType
+  users: [UserType]
+  usert(id: Int): UsetType
+  userts: [UsetType]
+  clas(id: Int): ClassType
+  classes: [ClassType]
+  teach(id: Int): TeachesType
+  teaches: [TeachesType]
+  belong(id: Int): BelongsType
+  belongs: [BelongsType]
+}
+
+type TeachesType {
+  id: ID!
+  user: UsetType!
+  clas: ClassType!
+  course: CourseType!
+}
+
+type UpdateCourse {
+  ok: Boolean
+  course: CourseType
+}
+
+enum UserTType {
+  STUDENT
+  FACULTY
+}
+
+type UserType {
+  id: ID!
+  lastLogin: DateTime
+  username: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  isStaff: Boolean!
+  isActive: Boolean!
+  dateJoined: DateTime!
+  usert: UsetType
+  password: String!
+  isSuperuser: Boolean!
+}
+
+type UsetType {
+  id: ID!
+  user: UserType!
+  type: UserTType!
+  teachesSet: [TeachesType!]!
+  belongsSet: [BelongsType!]!
+}
