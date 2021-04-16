@@ -163,7 +163,7 @@ class _FacCourseState extends State<FacCourse> {
                                   ),
                                   IconButton(
                                     icon: Icon(
-                                      Icons.filter_list,
+                                      Icons.tune,
                                     ),
                                     color: kGlacier,
                                     tooltip: 'Filter Quizzes',
@@ -448,7 +448,7 @@ class _FacCourseState extends State<FacCourse> {
                             style: Theme.of(context).textTheme.headline4),
                         IconButton(
                           icon: Icon(
-                            Icons.filter_list,
+                            Icons.tune,
                           ),
                           color: kMatte,
                           tooltip: 'Filter Quizzes',

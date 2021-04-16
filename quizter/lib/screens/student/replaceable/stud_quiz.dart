@@ -226,7 +226,7 @@ class _StudQuizState extends State<StudQuiz> {
                             style: Theme.of(context).textTheme.headline4),
                         IconButton(
                           icon: Icon(
-                            Icons.filter_list,
+                            Icons.tune,
                           ),
                           color: kMatte,
                           tooltip: 'Filter Quizzes',

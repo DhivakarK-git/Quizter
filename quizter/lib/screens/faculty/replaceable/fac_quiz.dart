@@ -137,7 +137,7 @@ class _FacQuizState extends State<FacQuiz> {
                             style: Theme.of(context).textTheme.headline4),
                         IconButton(
                           icon: Icon(
-                            Icons.filter_list,
+                            Icons.tune,
                           ),
                           color: kMatte,
                           tooltip: 'Filter Quizzes',
