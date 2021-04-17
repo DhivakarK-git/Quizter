@@ -262,7 +262,7 @@ class _StudQuizState extends State<StudQuiz> {
                               //TODO: fix card overflow
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 32.0),
-                              itemCount: quizset.length,
+                              itemCount: 6,
                               gridDelegate:
                                   new SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisSpacing: 10,
