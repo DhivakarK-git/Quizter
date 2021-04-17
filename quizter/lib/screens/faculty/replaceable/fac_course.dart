@@ -446,13 +446,27 @@ class _FacCourseState extends State<FacCourse> {
                       children: [
                         Text("Courses",
                             style: Theme.of(context).textTheme.headline4),
-                        IconButton(
-                          icon: Icon(
-                            Icons.tune,
-                          ),
-                          color: kMatte,
-                          tooltip: 'Filter Quizzes',
-                          onPressed: () {},
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.refresh,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {
+                                refresh();
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.tune,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -637,6 +651,13 @@ class _FacCourseState extends State<FacCourse> {
     ag = new AuthGraphQL();
     ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
     _quiz = ag.getClient();
+    getCourses();
+  }
+
+  void refresh() {
+    setState(() {
+      courseset = [];
+    });
     getCourses();
   }
 
