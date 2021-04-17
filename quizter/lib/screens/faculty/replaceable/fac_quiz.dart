@@ -135,13 +135,30 @@ class _FacQuizState extends State<FacQuiz> {
                       children: [
                         Text("Quizzes",
                             style: Theme.of(context).textTheme.headline4),
-                        IconButton(
-                          icon: Icon(
-                            Icons.tune,
-                          ),
-                          color: kMatte,
-                          tooltip: 'Filter Quizzes',
-                          onPressed: () {},
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.refresh,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {
+                                refresh();
+                              },
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.tune,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -151,34 +168,122 @@ class _FacQuizState extends State<FacQuiz> {
                   child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 208,
-                      child: GridView.builder(
-                          //TODO: fix card overflow
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 32.0),
-                          itemCount: quizset.length,
-                          gridDelegate:
-                              new SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            crossAxisCount:
-                                (MediaQuery.of(context).size.width) ~/ 347,
-                            childAspectRatio: 1.729,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return TextButton(
-                              onPressed: () {
-                                quizid = int.parse(quizset[index]['id']);
-                                quizname = quizset[index]['quizName'];
-                                accesscode = quizset[index]['accessCode'];
-                                showquiz = true;
-                                setState(() {});
-                              },
-                              style: TextButton.styleFrom(shadowColor: kMatte),
-                              child: kIsWeb
-                                  ? cardQuiz(index, context).moveUpOnHover
-                                  : cardQuiz(index, context),
-                            );
-                          })),
+                      child: quizset.isEmpty
+                          ? GridView.builder(
+                              //TODO: fix card overflow
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 32.0),
+                              itemCount: 6,
+                              gridDelegate:
+                                  new SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                crossAxisCount:
+                                    (MediaQuery.of(context).size.width) ~/ 347,
+                                childAspectRatio: 1.729,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  color: kIgris,
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 24,
+                                              width: 132,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 16,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          color: kQuiz,
+                                          height: 14,
+                                          width: 72,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 132,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              })
+                          : GridView.builder(
+                              //TODO: fix card overflow
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 32.0),
+                              itemCount: quizset.length,
+                              gridDelegate:
+                                  new SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                crossAxisCount:
+                                    (MediaQuery.of(context).size.width) ~/ 347,
+                                childAspectRatio: 1.729,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return TextButton(
+                                  onPressed: () {
+                                    quizid = int.parse(quizset[index]['id']);
+                                    quizname = quizset[index]['quizName'];
+                                    accesscode = quizset[index]['accessCode'];
+                                    showquiz = true;
+                                    setState(() {});
+                                  },
+                                  style:
+                                      TextButton.styleFrom(shadowColor: kMatte),
+                                  child: kIsWeb
+                                      ? cardQuiz(index, context).moveUpOnHover
+                                      : cardQuiz(index, context),
+                                );
+                              })),
                 ),
               ],
             ),
@@ -304,6 +409,13 @@ class _FacQuizState extends State<FacQuiz> {
     ag = new AuthGraphQL();
     ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
     _quiz = ag.getClient();
+    getQuizes();
+  }
+
+  void refresh() {
+    setState(() {
+      quizset = [];
+    });
     getQuizes();
   }
 

@@ -453,17 +453,19 @@ class _FacCourseState extends State<FacCourse> {
                                 Icons.refresh,
                               ),
                               color: kMatte,
-                              tooltip: 'Filter Quizzes',
                               onPressed: () {
                                 refresh();
                               },
+                            ),
+                            SizedBox(
+                              width: 8.0,
                             ),
                             IconButton(
                               icon: Icon(
                                 Icons.tune,
                               ),
                               color: kMatte,
-                              tooltip: 'Filter Quizzes',
+                              tooltip: 'Filter Courses',
                               onPressed: () {},
                             ),
                           ],
