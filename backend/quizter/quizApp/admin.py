@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin,AdminPassword
 from .models import UserT,Course,Clas,Teaches,Belongs,Quiz,Question,Answer,Options,Takes,Makes,Notification
 from django.contrib.auth.models import User,Group
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 
 admin.site.site_header = 'Quizter'
 admin.site.site_title = 'Quizter'
