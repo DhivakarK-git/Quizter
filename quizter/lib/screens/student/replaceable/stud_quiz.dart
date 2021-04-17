@@ -224,13 +224,30 @@ class _StudQuizState extends State<StudQuiz> {
                       children: [
                         Text("Upcoming Quizzes",
                             style: Theme.of(context).textTheme.headline4),
-                        IconButton(
-                          icon: Icon(
-                            Icons.tune,
-                          ),
-                          color: kMatte,
-                          tooltip: 'Filter Quizzes',
-                          onPressed: () {},
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.refresh,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {
+                                refresh();
+                              },
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.tune,
+                              ),
+                              color: kMatte,
+                              tooltip: 'Filter Quizzes',
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -240,64 +257,152 @@ class _StudQuizState extends State<StudQuiz> {
                   child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 208,
-                      child: GridView.builder(
-                          //TODO: fix card overflow
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 32.0),
-                          itemCount: quizset.length,
-                          gridDelegate:
-                              new SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            crossAxisCount:
-                                (MediaQuery.of(context).size.width) ~/ 347,
-                            childAspectRatio: 1.729,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return TextButton(
-                              onPressed: () async {
-                                quizid = int.parse(quizset[index]['id']);
-                                quizname = quizset[index]['quizName'];
-                                if (valTime(quizset[index]['startTime'],
-                                    quizset[index]['endTime'])) {
-                                  showquiz = true;
-                                  id = index;
-                                  if (starttime[index] == "-1") {
-                                    String dt = DateTime.now()
-                                        .toString()
-                                        .substring(0, 16);
-                                    dt = dt.substring(0, 10) +
-                                        'T' +
-                                        dt.substring(11);
-                                    final QueryResult quiz = await _quiz.queryA(
-                                        gq.updateStartTime(
-                                            userid: userId,
-                                            quizid: quizid,
-                                            dt: dt));
-                                    setState(() {});
-                                  } else
-                                    setState(() {});
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                          duration: Duration(seconds: 5),
-                                          elevation: 4,
-                                          backgroundColor: kMatte,
-                                          content: Text(
-                                            'The Quiz you are trying to attempt, either has not started yet or is completed.',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2
-                                                .copyWith(color: kFrost),
-                                          )));
-                                }
-                              },
-                              style: TextButton.styleFrom(shadowColor: kMatte),
-                              child: kIsWeb
-                                  ? cardQuiz(index, context).moveUpOnHover
-                                  : cardQuiz(index, context),
-                            );
-                          })),
+                      child: quizset.isEmpty
+                          ? GridView.builder(
+                              //TODO: fix card overflow
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 32.0),
+                              itemCount: quizset.length,
+                              gridDelegate:
+                                  new SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                crossAxisCount:
+                                    (MediaQuery.of(context).size.width) ~/ 347,
+                                childAspectRatio: 1.729,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  color: kIgris,
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 24,
+                                              width: 132,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 16,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          color: kQuiz,
+                                          height: 14,
+                                          width: 72,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 132,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                            Container(
+                                              color: kQuiz,
+                                              height: 14,
+                                              width: 72,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              })
+                          : GridView.builder(
+                              //TODO: fix card overflow
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 32.0),
+                              itemCount: quizset.length,
+                              gridDelegate:
+                                  new SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                crossAxisCount:
+                                    (MediaQuery.of(context).size.width) ~/ 347,
+                                childAspectRatio: 1.729,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return TextButton(
+                                  onPressed: () async {
+                                    quizid = int.parse(quizset[index]['id']);
+                                    quizname = quizset[index]['quizName'];
+                                    if (valTime(quizset[index]['startTime'],
+                                        quizset[index]['endTime'])) {
+                                      showquiz = true;
+                                      id = index;
+                                      if (starttime[index] == "-1") {
+                                        String dt = DateTime.now()
+                                            .toString()
+                                            .substring(0, 16);
+                                        dt = dt.substring(0, 10) +
+                                            'T' +
+                                            dt.substring(11);
+                                        final QueryResult quiz = await _quiz
+                                            .queryA(gq.updateStartTime(
+                                                userid: userId,
+                                                quizid: quizid,
+                                                dt: dt));
+                                        setState(() {});
+                                      } else
+                                        setState(() {});
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              duration: Duration(seconds: 5),
+                                              elevation: 4,
+                                              backgroundColor: kMatte,
+                                              content: Text(
+                                                'The Quiz you are trying to attempt, either has not started yet or is completed.',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText2
+                                                    .copyWith(color: kFrost),
+                                              )));
+                                    }
+                                  },
+                                  style:
+                                      TextButton.styleFrom(shadowColor: kMatte),
+                                  child: kIsWeb
+                                      ? cardQuiz(index, context).moveUpOnHover
+                                      : cardQuiz(index, context),
+                                );
+                              })),
                 ),
               ],
             ),
@@ -392,6 +497,13 @@ class _StudQuizState extends State<StudQuiz> {
     ag = new AuthGraphQL();
     ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
     _quiz = ag.getClient();
+    getQuizes();
+  }
+
+  void refresh() {
+    setState(() {
+      quizset = [];
+    });
     getQuizes();
   }
 
