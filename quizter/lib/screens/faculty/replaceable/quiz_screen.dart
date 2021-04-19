@@ -479,10 +479,18 @@ class _QuizScreenState extends State<QuizScreen> {
                           onPressed: () async {
                             try {
                               await _setQuiz();
+                              if (quesset.isEmpty) {
+                                quesset = [-1];
+                                nq = 1;
+                                marks = [0];
+                                colors = [0];
+                                _formQuiz = [GlobalKey<FormState>()];
+                              }
                             } catch (e) {
                               quesset = [-1];
                               nq = 1;
                               marks = [0];
+                              colors = [0];
                               _formQuiz = [GlobalKey<FormState>()];
                             }
                             await getQuestions();
