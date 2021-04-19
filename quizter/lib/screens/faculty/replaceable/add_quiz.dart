@@ -2191,8 +2191,8 @@ class _AddQuizState extends State<AddQuiz> {
                                       ),
                                       Container(
                                         width:
-                                            MediaQuery.of(context).size.width -
-                                                576,
+                                            MediaQuery.of(context).size.width /
+                                                1.85,
                                         child: Card(
                                           elevation: 2,
                                           color: current[i] == 1
