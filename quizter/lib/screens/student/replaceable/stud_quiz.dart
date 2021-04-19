@@ -64,6 +64,10 @@ class _StudQuizState extends State<StudQuiz> {
             }
           }
         });
+        if (quizset.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          quizset.add(-1);
+        }
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
@@ -344,65 +348,73 @@ class _StudQuizState extends State<StudQuiz> {
                                   ),
                                 );
                               })
-                          : GridView.builder(
-                              //TODO: fix card overflow
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 32.0),
-                              itemCount: quizset.length,
-                              gridDelegate:
-                                  new SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                                crossAxisCount:
-                                    (MediaQuery.of(context).size.width) ~/ 347,
-                                childAspectRatio: 1.729,
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                return TextButton(
-                                  onPressed: () async {
-                                    quizid = int.parse(quizset[index]['id']);
-                                    quizname = quizset[index]['quizName'];
-                                    if (valTime(quizset[index]['startTime'],
-                                        quizset[index]['endTime'])) {
-                                      showquiz = true;
-                                      id = index;
-                                      if (starttime[index] == "-1") {
-                                        String dt = DateTime.now()
-                                            .toString()
-                                            .substring(0, 16);
-                                        dt = dt.substring(0, 10) +
-                                            'T' +
-                                            dt.substring(11);
-                                        final QueryResult quiz = await _quiz
-                                            .queryA(gq.updateStartTime(
-                                                userid: userId,
-                                                quizid: quizid,
-                                                dt: dt));
-                                        setState(() {});
-                                      } else
-                                        setState(() {});
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              duration: Duration(seconds: 5),
-                                              elevation: 4,
-                                              backgroundColor: kMatte,
-                                              content: Text(
-                                                'The Quiz you are trying to attempt, either has not started yet or is completed.',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText2
-                                                    .copyWith(color: kFrost),
-                                              )));
-                                    }
-                                  },
-                                  style:
-                                      TextButton.styleFrom(shadowColor: kMatte),
-                                  child: kIsWeb
-                                      ? cardQuiz(index, context).moveUpOnHover
-                                      : cardQuiz(index, context),
-                                );
-                              })),
+                          : quizset[0] == -1
+                              ? Container()
+                              : GridView.builder(
+                                  //TODO: fix card overflow
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 32.0),
+                                  itemCount: quizset.length,
+                                  gridDelegate:
+                                      new SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                    crossAxisCount:
+                                        (MediaQuery.of(context).size.width) ~/
+                                            347,
+                                    childAspectRatio: 1.729,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return TextButton(
+                                      onPressed: () async {
+                                        quizid =
+                                            int.parse(quizset[index]['id']);
+                                        quizname = quizset[index]['quizName'];
+                                        if (valTime(quizset[index]['startTime'],
+                                            quizset[index]['endTime'])) {
+                                          showquiz = true;
+                                          id = index;
+                                          if (starttime[index] == "-1") {
+                                            String dt = DateTime.now()
+                                                .toString()
+                                                .substring(0, 16);
+                                            dt = dt.substring(0, 10) +
+                                                'T' +
+                                                dt.substring(11);
+                                            final QueryResult quiz = await _quiz
+                                                .queryA(gq.updateStartTime(
+                                                    userid: userId,
+                                                    quizid: quizid,
+                                                    dt: dt));
+                                            setState(() {});
+                                          } else
+                                            setState(() {});
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  duration:
+                                                      Duration(seconds: 5),
+                                                  elevation: 4,
+                                                  backgroundColor: kMatte,
+                                                  content: Text(
+                                                    'The Quiz you are trying to attempt, either has not started yet or is completed.',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2
+                                                        .copyWith(
+                                                            color: kFrost),
+                                                  )));
+                                        }
+                                      },
+                                      style: TextButton.styleFrom(
+                                          shadowColor: kMatte),
+                                      child: kIsWeb
+                                          ? cardQuiz(index, context)
+                                              .moveUpOnHover
+                                          : cardQuiz(index, context),
+                                    );
+                                  })),
                 ),
               ],
             ),
