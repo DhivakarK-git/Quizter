@@ -163,10 +163,10 @@ class _FacCourseState extends State<FacCourse> {
                                   ),
                                   IconButton(
                                     icon: Icon(
-                                      Icons.tune,
+                                      Icons.filter_list,
                                     ),
                                     color: kGlacier,
-                                    tooltip: 'Filter Quizzes',
+                                    tooltip: 'Filter List',
                                     onPressed: () {},
                                   ),
                                 ],
@@ -559,7 +559,6 @@ class _FacCourseState extends State<FacCourse> {
                                 return TextButton(
                                   onPressed: () {
                                     classlist = courseset[index];
-                                    print(classlist);
                                     expanded = List<int>.generate(
                                         classlist[4].length, (int index) => 0);
                                     showquiz = true;
