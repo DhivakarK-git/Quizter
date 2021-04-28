@@ -69,7 +69,7 @@ void main() {
       bool testFunction = a
           .createState()
           .valDate(DateTime.now().add(Duration(days: 7)).toString());
-      expect(testFunction, false);
+      expect(testFunction, true);
     });
   });
 
