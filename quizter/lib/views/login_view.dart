@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizter/screens/failed_login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:quizter/graphql/graphql.dart';
 import 'package:graphql/client.dart';
@@ -16,6 +17,7 @@ class LoginView {
   GraphQLClient _data;
   GraphQueries gq = new GraphQueries();
   AuthGraphQL _ag;
+  String _recoverycode;
 
   LoginView() {
     _data = GraphQL().getClient();
@@ -24,6 +26,45 @@ class LoginView {
   void _launchURL() async => await canLaunch(_url)
       ? await launch(_url)
       : throw 'Could not launch $_url';
+
+  Future<dynamic> checkemail(context, username) async {
+    final QueryResult result =
+        await _data.queryCharacter(gq.checkEmail(username: username));
+    if (result.hasException) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 5),
+          elevation: 2,
+          backgroundColor: kMatte,
+          content: Text(
+            'Please enter a valid Username',
+            style:
+                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
+          )));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen(0)));
+    } else {
+      if (result.data['checkEmail']['ok'])
+        _recoverycode = result.data['checkEmail']['accessCode'];
+      return result.data['checkEmail']['ok'];
+    }
+  }
+
+  Future<bool> validateSecCode(
+      String secCode, String username, String password) async {
+    if (secCode == _recoverycode) {
+      final QueryResult result = await _data.queryCharacter(
+          gq.changePassword(username: username, password: password));
+      return result.data['changePassword']['ok'];
+    }
+    return false;
+  }
+
+  void forgotScreen(context, username) => Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => FailedLoginScreen(0, username)));
+
+  void loginScreen(context) => Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => LoginScreen(0)));
 
   Future<bool> authenticate(
       {BuildContext context, String username, String password}) async {

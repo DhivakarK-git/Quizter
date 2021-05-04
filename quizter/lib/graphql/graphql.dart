@@ -14,6 +14,7 @@ extension Graph on GraphQLClient {
     final String readCharacter = query;
     return this.query(QueryOptions(
       document: gql(readCharacter),
+      fetchPolicy: FetchPolicy.noCache,
     ));
   }
 }

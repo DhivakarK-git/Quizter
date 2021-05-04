@@ -6,6 +6,9 @@ import graphql_jwt
 from django_graphene_permissions import permissions_checker
 from django_graphene_permissions.permissions import IsAuthenticated
 import datetime
+import secrets
+import string
+from django.core.mail import send_mail
 
 
 class CourseType(DjangoObjectType):
@@ -125,7 +128,6 @@ class Query(ObjectType):
             raise Exception('Not logged in!')
         return user
 
-
 class QuizInput(graphene.InputObjectType):
     quiz_name = graphene.String()
     access_code = graphene.String()
@@ -202,6 +204,53 @@ class UpdateQuiz(graphene.Mutation):
             quiz_instance.save()
             return UpdateQuiz(ok=ok, quiz=quiz_instance)
         return UpdateQuiz(ok=ok, quiz=None)
+
+
+class CheckEmail(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+    accessCode=graphene.String()
+    @staticmethod
+    def mutate(root, info, username=None):
+        ok = False
+        try:
+            user = User.objects.get(username=username)
+        except:
+            raise TypeError("Enter valid Credentials")
+        if user and user.email is not None and user.email != "":
+            ok = True
+            code = ''.join(secrets.choice(string.ascii_uppercase +string.ascii_lowercase + string.digits) for i in range(8))
+            send_mail(
+    		'Quizter',
+    		'''Hi '''+str(user.username)+''',\n   You have recently requested for a password change for your account. The following code is the unique security code and please enter it when asked for.\n\n   Security Code:\t'''+code+'''\n\n   We hope this leads to succesful recovery of your account.\nRegards,\nQuizter Team.''',
+    		'quizterTeam@gmail.com',
+    		[user.email],
+    		fail_silently=False,
+			)
+            return CheckEmail(ok=ok,accessCode=code)
+        return CheckEmail(ok=ok,accessCode=None)
+
+class ChangePassword(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+    @staticmethod
+    def mutate(root, info, username=None,password=None):
+        ok = False
+        try:
+            user = User.objects.get(username=username)
+        except:
+            raise TypeError("Enter valid Credentials")
+        if user:
+            ok = True
+            user.set_password(password)
+            user.save()
+            return ChangePassword(ok=ok)
+        return ChangePassword(ok=ok)
 
 class DeleteQuiz(graphene.Mutation):
     class Arguments:
@@ -555,7 +604,10 @@ class Mutation(graphene.ObjectType):
     create_takes = CreateTakes.Field()
     update_s_takes=UpdateSTakes.Field()
     delete_takes = DeleteTakes.Field()
+    check_email=CheckEmail.Field()
+    change_password=ChangePassword.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+
 schema = graphene.Schema(query=Query, mutation=Mutation)
