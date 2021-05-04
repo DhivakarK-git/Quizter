@@ -7,15 +7,15 @@ import 'package:quizter/views/login_view.dart';
 import 'package:quizter/widgets/text_field.dart';
 import 'dart:async';
 
-class FailedLoginScreen extends StatefulWidget {
+class ForgotLoginScreen extends StatefulWidget {
   final int time;
   final String username;
-  FailedLoginScreen(this.time, this.username);
+  ForgotLoginScreen(this.time, this.username);
   @override
-  _FailedLoginScreenState createState() => _FailedLoginScreenState();
+  _ForgotLoginScreenState createState() => _ForgotLoginScreenState();
 }
 
-class _FailedLoginScreenState extends State<FailedLoginScreen>
+class _ForgotLoginScreenState extends State<ForgotLoginScreen>
     with SingleTickerProviderStateMixin {
   AnimationController animation;
   Animation<Offset> _offsetAnimation;

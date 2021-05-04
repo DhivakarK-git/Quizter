@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quizter/screens/failed_login_screen.dart';
+import 'package:quizter/screens/forgot_login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:quizter/graphql/graphql.dart';
 import 'package:graphql/client.dart';
@@ -61,7 +61,7 @@ class LoginView {
   }
 
   void forgotScreen(context, username) => Navigator.pushReplacement(context,
-      MaterialPageRoute(builder: (context) => FailedLoginScreen(0, username)));
+      MaterialPageRoute(builder: (context) => ForgotLoginScreen(0, username)));
 
   void loginScreen(context) => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => LoginScreen(0)));
