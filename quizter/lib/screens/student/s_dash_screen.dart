@@ -18,6 +18,40 @@ class SDashScreen extends StatefulWidget {
 class _SDashScreenState extends State<SDashScreen> {
   int _selectedIndex = 0;
 
+  Future<void> _showChangePassword() async {
+    ScrollController _icarus = new ScrollController();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 0, 40.0, 4),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Change password',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.close),
+                      color: kMatte,
+                      onPressed: () {
+                        
+                        Navigator.of(context).pop();
+                      })
+                ]),
+          ),
+          backgroundColor: kFrost,
+          children: [
+          
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _showMyDialog() async {
     return showDialog(
       context: context,
