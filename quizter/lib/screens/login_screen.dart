@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen>
   AnimationController animation;
   Animation<Offset> _offsetAnimation;
   bool _isHidden = false;
-  String _username, _password;
+  String _username = '', _password = '';
   LoginView login = new LoginView();
   final _formKey = GlobalKey<FormState>();
 
@@ -244,7 +244,33 @@ class _LoginScreenState extends State<LoginScreen>
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             TextButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                if (_username.isNotEmpty)
+                                                  login.forgotScreen(context,
+                                                      _username.toLowerCase());
+                                                else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                          duration: Duration(
+                                                              seconds: 5),
+                                                          elevation: 2,
+                                                          backgroundColor:
+                                                              kMatte,
+                                                          content: Text(
+                                                            'Please enter your Username',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText2
+                                                                .copyWith(
+                                                                    color:
+                                                                        kFrost),
+                                                          )));
+                                                }
+                                              },
                                               child: Text(
                                                 "Forgot Password?",
                                                 style: GoogleFonts.montserrat(
@@ -272,7 +298,38 @@ class _LoginScreenState extends State<LoginScreen>
                                                       label: 'Forgot Password',
                                                       textColor: kQuiz,
                                                       disabledTextColor: kIgris,
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        if (_username
+                                                            .isNotEmpty) {
+                                                          login.forgotScreen(
+                                                              context,
+                                                              _username
+                                                                  .toLowerCase());
+                                                        } else {
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                              SnackBar(
+                                                                  behavior:
+                                                                      SnackBarBehavior
+                                                                          .floating,
+                                                                  duration:
+                                                                      Duration(
+                                                                          seconds:
+                                                                              5),
+                                                                  elevation: 2,
+                                                                  backgroundColor:
+                                                                      kMatte,
+                                                                  content: Text(
+                                                                    'Please Enter A valid Username',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodyText2
+                                                                        .copyWith(
+                                                                            color:
+                                                                                kFrost),
+                                                                  )));
+                                                        }
+                                                      },
                                                     ),
                                                     elevation: 2,
                                                     backgroundColor: kMatte,
@@ -289,7 +346,8 @@ class _LoginScreenState extends State<LoginScreen>
                                                   bool success =
                                                       await login.authenticate(
                                                           context: context,
-                                                          username: _username,
+                                                          username: _username
+                                                              .toLowerCase(),
                                                           password: _password);
                                                   if (!success) {
                                                     ScaffoldMessenger.of(

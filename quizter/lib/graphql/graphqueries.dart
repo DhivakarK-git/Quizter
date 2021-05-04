@@ -9,6 +9,28 @@ mutation {
 ''';
   }
 
+  String checkEmail({String username}) {
+    return '''
+  mutation{
+  checkEmail(username: "$username") {
+    ok
+    accessCode
+  }
+}
+
+''';
+  }
+
+  String changePassword({String username, String password}) {
+    return '''
+  mutation{
+  changePassword(username: "$username",password:"$password") {
+    ok
+  }
+}
+''';
+  }
+
   String createAnswer({int quesId, String answerText}) {
     return '''
 mutation{

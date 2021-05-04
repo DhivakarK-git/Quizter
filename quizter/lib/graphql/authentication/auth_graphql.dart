@@ -23,11 +23,7 @@ extension Graph on GraphQLClient {
     final String readCharacter = query;
     return this.query(QueryOptions(
       document: gql(readCharacter),
-      fetchPolicy: FetchPolicy.networkOnly,
-      // ignore all GraphQL errors.
-      errorPolicy: ErrorPolicy.ignore,
-      // ignore cache data.
-      cacheRereadPolicy: CacheRereadPolicy.ignoreAll,
+      fetchPolicy: FetchPolicy.noCache,
     ));
   }
 }
