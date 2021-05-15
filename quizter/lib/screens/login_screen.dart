@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _isHidden = false;
   String _username = '', _password = '';
   LoginView login = new LoginView();
+  int noofattempts = 0;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -353,6 +354,11 @@ class _LoginScreenState extends State<LoginScreen>
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(snackBar);
+                                                    if (noofattempts < 3)
+                                                      noofattempts++;
+                                                    else
+                                                      login.failedScreen(
+                                                          context, 2);
                                                   } else {
                                                     _username = '';
                                                     _password = '';
