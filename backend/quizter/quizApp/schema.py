@@ -1,6 +1,6 @@
 import graphene
 from graphene_django.types import DjangoObjectType, ObjectType
-from .models import Course,UserT,Clas,Teaches,Belongs,Quiz,Question,Answer,Options,Takes,Makes
+from .models import Course,UserT,Clas,Teaches,Belongs,Quiz,Question,Answer,Options,Takes,Makes,Notification
 from django.contrib.auth.models import User
 import graphql_jwt
 from django_graphene_permissions import permissions_checker
@@ -58,6 +58,10 @@ class QuizType(DjangoObjectType):
 class AnswerType(DjangoObjectType):
     class Meta:
         model = Answer
+
+class NotificationType(DjangoObjectType):
+    class Meta:
+        model = Notification
 
 class OptionsType(DjangoObjectType):
     class Meta:
@@ -121,6 +125,7 @@ class Query(ObjectType):
     make = graphene.Field(MakesType, id=graphene.Int())
     makes = graphene.List(MakesType)
     questions = graphene.List(QuestionType)
+    notifications = graphene.List(NotificationType)
 
     def resolve_me(self, info):
         user = info.context.user
@@ -225,6 +230,32 @@ class CheckEmail(graphene.Mutation):
             send_mail(
     		'Quizter',
     		'''Hi '''+str(user.username)+''',\n   You have recently requested for a password change for your account. The following code is the unique security code and please enter it when asked for.\n\n   Security Code:\t'''+code+'''\n\n   We hope this leads to succesful recovery of your account.\nRegards,\nQuizter Team.''',
+    		'quizterTeam@gmail.com',
+    		[user.email],
+    		fail_silently=False,
+			)
+            return CheckEmail(ok=ok,accessCode=code)
+        return CheckEmail(ok=ok,accessCode=None)
+
+class FailedLogin(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+    accessCode=graphene.String()
+    @staticmethod
+    def mutate(root, info, username=None):
+        ok = False
+        try:
+            user = User.objects.get(username=username)
+        except:
+            raise TypeError("Enter valid Credentials")
+        if user and user.email is not None and user.email != "":
+            ok = True
+            code = ''.join(secrets.choice(string.ascii_uppercase +string.ascii_lowercase + string.digits) for i in range(8))
+            send_mail(
+    		'Quizter',
+    		'''Hi '''+str(user.username)+''',\n   Your account has been inappropriately being used. \n We suggest you to change your password.\n\n   We hope this leads to succesful recovery of your account.\nRegards,\nQuizter Team.''',
     		'quizterTeam@gmail.com',
     		[user.email],
     		fail_silently=False,
@@ -582,6 +613,28 @@ class DeleteFAnswer(graphene.Mutation):
             return DeleteFAnswer(ok=ok, answer=answer_instance)
         return DeleteFAnswer(ok=ok, answer=None)
 
+class NotificationInput(graphene.InputObjectType):
+    user = graphene.String()
+    notifi=graphene.String()
+
+class DeleteNotification(graphene.Mutation):
+    class Arguments:
+        input = NotificationInput(required=True)
+
+    ok = graphene.Boolean()
+    Notification = graphene.Field(NotificationType)
+
+    @staticmethod
+    @permissions_checker([IsAuthenticated])
+    def mutate(root, info, input=None):
+        ok = False
+        notification_instance = Notification.objects.filter(user=UserT.objects.get(user=User.objects.get(username=input.user)),Notification=input.notifi)
+        if notification_instance:
+            ok = True
+            notification_instance.delete()
+            return DeleteNotification(ok=ok, Notification=notification_instance)
+        return DeleteNotification(ok=ok, Notification=None)
+
 
 class Mutation(graphene.ObjectType):
     create_options = CreateOptions.Field()
@@ -604,7 +657,9 @@ class Mutation(graphene.ObjectType):
     create_takes = CreateTakes.Field()
     update_s_takes=UpdateSTakes.Field()
     delete_takes = DeleteTakes.Field()
+    delete_notification=DeleteNotification.Field()
     check_email=CheckEmail.Field()
+    failedlogin=FailedLogin.Field()
     change_password=ChangePassword.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
