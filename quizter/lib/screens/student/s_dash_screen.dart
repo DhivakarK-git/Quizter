@@ -28,7 +28,7 @@ class _SDashScreenState extends State<SDashScreen> {
   Future<void> _showChangePassword() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, //
+      barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
         return SimpleDialog(
@@ -313,6 +313,77 @@ class _SDashScreenState extends State<SDashScreen> {
     );
   }
 
+  Future<void> _showMyNotifications(var notifications) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      barrierColor: kMatte.withAlpha(47),
+      builder: (BuildContext context) {
+        return Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(top: 56, right: 1),
+            child: SizedBox(
+              width: 350,
+              height: 224,
+              child: Card(
+                color: kGlacier,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (int i = notifications.length - 1; i >= 0; i--)
+                        SizedBox(
+                          width: 340,
+                          child: Card(
+                            color: kFrost,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                    child: SizedBox(
+                                      width: 280,
+                                      child: Text(
+                                        notifications[i]['Notification'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      login.deleteNotification(
+                                          context,
+                                          widget.username,
+                                          notifications[i]['Notification']);
+                                      notifications.removeAt(i);
+                                      Navigator.of(context).pop();
+                                      _showMyNotifications(notifications);
+                                    },
+                                    child: Icon(Icons.close, color: kMatte),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -337,7 +408,10 @@ class _SDashScreenState extends State<SDashScreen> {
           actions: [
             IconButton(
               icon: Icon(Icons.circle_notifications),
-              onPressed: () {},
+              onPressed: () async {
+                var notifications = await login.getNotifications(context);
+                _showMyNotifications(notifications);
+              },
             ),
             IconButton(
               icon: Icon(Icons.account_circle),

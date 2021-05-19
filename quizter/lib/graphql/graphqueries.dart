@@ -101,6 +101,30 @@ mutation {
 ''';
   }
 
+  String getNotification() {
+    return '''
+    {
+me{
+  usert{
+    notificationSet{
+      Notification
+    }
+  }
+}
+}
+''';
+  }
+
+  String deleteNotification(String user, String notification) {
+    return '''
+mutation {
+  deleteNotification(input: {user: "$user",notifi:"$notification"}) {
+    ok
+  }
+}
+  ''';
+  }
+
   String updateTQuiz(
       {String quizname,
       String accesscode,
