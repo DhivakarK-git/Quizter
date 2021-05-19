@@ -4,6 +4,9 @@ import 'package:quizter/screens/login_screen.dart';
 import 'package:quizter/screens/student/stud_router.dart';
 import 'package:quizter/widgets/rail_navigation.dart';
 import 'package:animations/animations.dart';
+import 'package:quizter/widgets/text_field.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:quizter/views/login_view.dart';
 
 class SDashScreen extends StatefulWidget {
   final String username, firstName, lastName;
@@ -17,6 +20,211 @@ class SDashScreen extends StatefulWidget {
 
 class _SDashScreenState extends State<SDashScreen> {
   int _selectedIndex = 0;
+  bool isScreenWide = false;
+  String _secCode, _password, _password1;
+  LoginView login = new LoginView();
+  final _formKey = GlobalKey<FormState>();
+
+  Future<void> _showChangePassword() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, //
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Change Password',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: kFrost),
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.close),
+                      color: kFrost,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })
+                ]),
+          ),
+          backgroundColor: kIgris,
+          children: [
+            Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 4),
+                      child: QuizterTextField(
+                        (value) {
+                          _secCode = value;
+                        },
+                        "Current Password",
+                        Icon(Icons.security, color: kMatte),
+                        false,
+                        (_secCode) {
+                          if (_secCode.isEmpty) {
+                            return '*Required';
+                          } else {
+                            RegExp regex =
+                                new RegExp(r'^[a-zA-Z0-9!@#\$%\^&*]*$');
+                            if (!regex.hasMatch(_secCode))
+                              return 'Enter Valid Password';
+                            else
+                              return null;
+                          }
+                        },
+                        TextInputAction.next,
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.width * 0.01,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 4),
+                      child: QuizterTextField(
+                        (value) {
+                          _password = value;
+                        },
+                        "New Password",
+                        Icon(Icons.visibility_off_outlined, color: kMatte),
+                        true,
+                        (_password) {
+                          if (_password.isEmpty) {
+                            return '*Required';
+                          } else {
+                            RegExp regex =
+                                new RegExp(r'^[a-zA-Z0-9!@#\$%\^&*]*$');
+                            if (!regex.hasMatch(_password))
+                              return 'Invalid password';
+                            else
+                              return null;
+                          }
+                        },
+                        TextInputAction.done,
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.01),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 4),
+                      child: QuizterTextField(
+                        (value) {
+                          _password1 = value;
+                        },
+                        "Confirm New Password",
+                        Icon(Icons.visibility_off_outlined, color: kMatte),
+                        true,
+                        (_password1) {
+                          if (_password1.isEmpty) {
+                            return '*Required';
+                          } else {
+                            RegExp regex =
+                                new RegExp(r'^[a-zA-Z0-9!@#\$%\^&*]*$');
+                            if (!regex.hasMatch(_password1))
+                              return 'Invalid password';
+                            else
+                              return null;
+                          }
+                        },
+                        TextInputAction.done,
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.01),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 4),
+                        child: Flex(
+                          direction:
+                              isScreenWide ? Axis.vertical : Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                final snackBar = SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 5),
+                                    elevation: 2,
+                                    backgroundColor: kMatte,
+                                    content: Text(
+                                      'Sorry, we couldn\'t match the password you\'ve entered. Please try again.',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          .copyWith(color: kFrost),
+                                    ));
+                                if (_formKey.currentState.validate() &&
+                                    _password == _password1) {
+                                  if (!(await login.changePassword(
+                                      _secCode, widget.username, _password))) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: Duration(seconds: 5),
+                                            elevation: 2,
+                                            backgroundColor: kMatte,
+                                            content: Text(
+                                              'Your new password has been successfully updated',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText2
+                                                  .copyWith(color: kFrost),
+                                            )));
+                                    Navigator.of(context).pop();
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          duration: Duration(seconds: 5),
+                                          elevation: 2,
+                                          backgroundColor: kMatte,
+                                          content: Text(
+                                            'Sorry, the passwords entered don\'t match. Please try again.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2
+                                                .copyWith(color: kFrost),
+                                          )));
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(primary: kFrost),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.012,
+                                  vertical:
+                                      MediaQuery.of(context).size.width * 0.008,
+                                ),
+                                child: Text(
+                                  'Update',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.014,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 0.25,
+                                      textStyle: TextStyle(
+                                        color: kMatte,
+                                      )),
+                                ),
+                              ),
+                            )
+                          ],
+                        ))
+                  ],
+                ))
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _showMyDialog() async {
     return showDialog(
@@ -63,7 +271,10 @@ class _SDashScreenState extends State<SDashScreen> {
                             primary: kFrost,
                             side: BorderSide(color: kFrost),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _showChangePassword();
+                          },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 8.0),

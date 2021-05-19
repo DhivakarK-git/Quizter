@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizter/screens/failed_login_screen.dart';
 import 'package:quizter/screens/forgot_login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:quizter/graphql/graphql.dart';
@@ -60,8 +61,25 @@ class LoginView {
     return false;
   }
 
+  Future<bool> changePassword(
+      String currpassword, String username, String password) async {
+    final QueryResult result = await _data.queryCharacter(
+      gq.validateUser(username: username, password: currpassword),
+    );
+    if (result.hasException) {
+      return false;
+    } else {
+      final QueryResult result = await _data.queryCharacter(
+          gq.changePassword(username: username, password: password));
+      return result.data['changePassword']['ok'];
+    }
+  }
+
   void forgotScreen(context, username) => Navigator.pushReplacement(context,
       MaterialPageRoute(builder: (context) => ForgotLoginScreen(0, username)));
+
+  void failedScreen(context, time) => Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => FailedLoginScreen(time)));
 
   void loginScreen(context) => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => LoginScreen(0)));
