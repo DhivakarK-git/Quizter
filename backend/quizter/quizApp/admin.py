@@ -4,6 +4,7 @@ from .models import UserT,Course,Clas,Teaches,Belongs,Quiz,Question,Answer,Optio
 from django.contrib.auth.models import User,Group
 from django.contrib import admin
 from django.contrib.admin import AdminSite
+from django.core.mail import send_mail
 
 admin.site.site_header = 'Quizter'
 admin.site.site_title = 'Quizter'
@@ -22,7 +23,16 @@ class UserAdmin(DjangoUserAdmin):
         super().save_model(request, obj, form, change)
         try:
             a=UserT.objects.filter(user=obj)
+            send_mail(
+    		'Quizter',
+    		'''Hi \n Your details have been updated. \n your new details are:\n username: '''+str(a[0].user.username)+'''\n First Name: '''+str(a[0].user.first_name)+'''\n Last Name: '''+str(a[0].user.last_name)+'''\n email: '''+str(a[0].user.email)+'''\n Type: '''+str(a[0].type)+'''\n\n   We hope this leads to succesful recovery of your account.\nRegards,\nQuizter Team.''',
+    		'quizterTeam@gmail.com',
+    		[a[0].user.email],
+    		fail_silently=False,
+			)
+            print(a[0].user.email)
             Notification(user=a[0],Notification ="Your details have been updated.").save()
+
         except:
             pass
 

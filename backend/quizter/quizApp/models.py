@@ -79,9 +79,15 @@ class Belongs(models.Model):
 	def save(self,*args, **kwargs):
 		super().save(*args,**kwargs)
 		Notification(user=self.user,Notification ="You have been added to "+str(self.clas)).save()
+		teachers=Teaches.objects.filter(clas=self.clas)
+		for i in teachers:
+			Notification(user=i.user,Notification =str(self.user)+" of class "+str(self.clas)+" has been added to your course "+str(i.course)).save()
 	def delete(self,*args, **kwargs):
 		super().delete(*args,**kwargs)
 		Notification(user=self.user,Notification ="You have been removed from "+str(self.clas)).save()
+		teachers=Teaches.objects.filter(clas=self.clas)
+		for i in teachers:
+			Notification(user=i.user,Notification =str(self.user)+" of class "+str(self.clas)+" has been removed from your course "+str(i.course)).save()
 
 	def __str__(self):
 		return "Student"
