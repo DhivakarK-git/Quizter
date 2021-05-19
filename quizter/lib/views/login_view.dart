@@ -51,6 +51,37 @@ class LoginView {
     }
   }
 
+  Future<dynamic> getNotifications(context) async {
+    AuthGraphQL ag = new AuthGraphQL();
+    ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
+    GraphQueries gq = new GraphQueries();
+    GraphQLClient _quiz = ag.getClient();
+    final QueryResult result = await _quiz.queryCharacter(
+      gq.getNotification(),
+    );
+    if (result.hasException) {
+      return false;
+    } else {
+      return result.data['me']['usert']['notificationSet'];
+    }
+  }
+
+  Future<bool> deleteNotification(
+      context, String username, String notification) async {
+    AuthGraphQL ag = new AuthGraphQL();
+    ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
+    GraphQueries gq = new GraphQueries();
+    GraphQLClient _quiz = ag.getClient();
+    final QueryResult result = await _quiz.queryCharacter(
+      gq.deleteNotification(username, notification),
+    );
+    if (result.hasException) {
+      return false;
+    } else {
+      return result.data['deleteNotification']['ok'];
+    }
+  }
+
   Future<bool> validateSecCode(
       String secCode, String username, String password) async {
     if (secCode == _recoverycode) {
