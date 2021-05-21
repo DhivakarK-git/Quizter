@@ -77,4 +77,7 @@ admin.site.register(Question,QuesAdmin)
 admin.site.register(Options)
 admin.site.register(Takes)
 admin.site.register(Makes)
+
+#to be removed
+admin.site.register(Options)
 admin.site.register(Notification)
