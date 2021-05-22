@@ -54,7 +54,8 @@ class _QuizScreenState extends State<QuizScreen> {
           colors = List<int>.generate(quesset.length, (int index) => 0);
           proceed = true;
           past = [];
-          ans = (await getAnswerText(0)).replaceAll("</*n>", "\n");
+          ans = (await getAnswerText(int.parse(quesset[index]['id'])))
+              .replaceAll("</*n>", "\n");
 
           for (int i = 0; i < quesset[index]['answers'].length; i++)
             past.add(int.parse(quesset[index]['answers'][i]['id']));
@@ -196,11 +197,17 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  Future<String> getAnswerText(int index) async {
+  Future<String> getAnswerText(int quesId) async {
     try {
-      final QueryResult qiz = await _quiz.queryA(gq.getQuiz(widget.id));
-      var iter = qiz.data['me']['usert']['takesSet'][0]['quiz']['questions']
-          [index]['answers'][0]['answerText'];
+      final QueryResult quiz =
+          await _quiz.queryA(gq.getOptions(quizId: widget.id, quesId: quesId));
+      optset = quiz.data['me']['usert']['takesSet'][0]['quiz']['question']
+          ['options'];
+      var iter = "Type your answer here ...";
+      if (optset.isNotEmpty) {
+        if (int.parse(optset[0]['user']['id']) == userId)
+          iter = optset[0]['answer']['answerText'];
+      }
       return iter;
     } catch (exception) {
       return "Type your answer here ...";
@@ -227,34 +234,38 @@ class _QuizScreenState extends State<QuizScreen> {
         }
       }
     } else {
-      try {
-        final QueryResult qiz = await _quiz.queryA(gq.getQuiz(widget.id));
-        var iter = qiz.data['me']['usert']['takesSet'][0]['quiz']['questions'];
-        for (int i = 0; i < iter.length; i++) {
-          if (int.parse(iter[i]['id']) == quesId) {
-            final QueryResult quiz = await _quiz.queryA(
-              gq.updateAnswer(
-                answerId: int.parse(iter[i]['answers'][0]['id']),
-                answerText: answer,
-              ),
-            );
-            break;
-          }
-        }
-        answer = "";
-      } catch (exception) {
+      var iter = await getAnswerText(quesId);
+      if (iter == "Type your answer here ...") {
         final QueryResult quiz = await _quiz.queryA(gq.createAnswer(
           quesId: quesId,
           answerText: answer,
         ));
-        int i = int.parse(quiz.data['createAnswer']['answer']['id']);
-        final QueryResult quz = await _quiz.queryA(
-          gq.createOption(
-            userId: userId,
-            answerId: i,
-            quesId: quesId,
-          ),
-        );
+        print(quiz.context);
+        if (quiz.data != null) {
+          int i = int.parse(quiz.data['createAnswer']['answer']['id']);
+          final QueryResult quz = await _quiz.queryA(
+            gq.createOption(
+              userId: userId,
+              answerId: i,
+              quesId: quesId,
+            ),
+          );
+          answer = "";
+        }
+      } else {
+        final QueryResult quiz = await _quiz
+            .queryA(gq.getOptions(quizId: widget.id, quesId: quesId));
+        var iter = quiz.data['me']['usert']['takesSet'][0]['quiz']['question']
+            ['options'];
+        if (iter.isNotEmpty) {
+          if (int.parse(optset[0]['user']['id']) == userId)
+            await _quiz.queryA(
+              gq.updateAnswer(
+                answerId: int.parse(iter[0]['answer']['id']),
+                answerText: answer,
+              ),
+            );
+        }
         answer = "";
       }
     }
@@ -694,7 +705,9 @@ class _QuizScreenState extends State<QuizScreen> {
                                                       (int index) => 0);
                                                 } else
                                                   ans = (await getAnswerText(
-                                                          index))
+                                                          int.parse(
+                                                              quesset[index]
+                                                                  ['id'])))
                                                       .replaceAll(
                                                           "</*n>", "\n");
                                                 ;
@@ -1008,7 +1021,8 @@ class _QuizScreenState extends State<QuizScreen> {
                                         quesset[index]['answers'].length,
                                         (int index) => 0);
                                   } else
-                                    ans = (await getAnswerText(index))
+                                    ans = (await getAnswerText(
+                                            int.parse(quesset[index]['id'])))
                                         .replaceAll("</*n>", "\n");
                                   await getOptions(
                                       int.parse(quesset[index]['id']));
@@ -1086,7 +1100,8 @@ class _QuizScreenState extends State<QuizScreen> {
                                         quesset[index]['answers'].length,
                                         (int index) => 0);
                                   } else
-                                    ans = (await getAnswerText(index))
+                                    ans = (await getAnswerText(
+                                            int.parse(quesset[index]['id'])))
                                         .replaceAll("</*n>", "\n");
                                   await getOptions(
                                       int.parse(quesset[index]['id']));
@@ -1184,7 +1199,10 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
             SizedBox(width: 20),
             TextButton(
-              onPressed: widget.goBackPlus,
+              onPressed: () async {
+                await _quiz.queryA(gq.calculate(userId, widget.id));
+                widget.goBackPlus.call();
+              },
               child: Text(
                 'SUBMIT',
                 style:

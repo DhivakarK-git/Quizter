@@ -324,7 +324,6 @@ class _QuizScreenState extends State<QuizScreen> {
                   userId: int.parse(tem[j]['user']['id']),
                   quizId: widget.quizId,
                   nemail: nemail));
-              print(publish.data);
             }
             break;
           }

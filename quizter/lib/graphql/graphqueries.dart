@@ -178,6 +178,7 @@ me{
               id
               answer{
               id
+              answerText
             }
               question {
                 id
@@ -323,6 +324,16 @@ me{
   }
 }
 ''';
+  }
+
+  String calculate(int userId, int quizId) {
+    return '''
+mutation {
+  calculate(uid: $userId,qid:$quizId) {
+    ok
+  }
+}
+  ''';
   }
 
   String getMeQuiz() {
