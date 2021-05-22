@@ -594,6 +594,32 @@ class CreateFAnswer(graphene.Mutation):
         answer_instance.save()
         return CreateFAnswer(ok=ok, answer=answer_instance)
 
+class Caluclate(graphene.Mutation):
+    class Arguments:
+        uid = graphene.ID(required=True)
+        qid = graphene.ID(required=True)
+
+    ok = graphene.Boolean()
+
+
+    @staticmethod
+    @permissions_checker([IsAuthenticated])
+    def mutate(root, info,uid =None,qid =None ):
+        ok = True
+        Question_list= Question.objects.filter(quiz=Quiz.objects.get(pk=qid))
+        for i in Question_list:
+
+            if(not(i.question_type == "short")):
+                answers_list=Answer.objects.filter(question=i)
+                print(i.question_text)
+                print(answers_list)
+                options= (Options.objects.filter(question=i,user=UserT.objects.get(pk=uid)))
+                print(options)
+
+
+        return Caluclate(ok=ok)
+
+
 class DeleteFAnswer(graphene.Mutation):
     class Arguments:
         id=graphene.ID(required=True)
@@ -661,6 +687,7 @@ class Mutation(graphene.ObjectType):
     check_email=CheckEmail.Field()
     failedlogin=FailedLogin.Field()
     change_password=ChangePassword.Field()
+    caluclate=Caluclate.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()

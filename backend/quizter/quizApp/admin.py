@@ -74,7 +74,7 @@ admin.site.register(Answer)
 admin.site.register(Clas,ClassAdmin)
 admin.site.register(Quiz,QuizAdmin)
 admin.site.register(Question,QuesAdmin)
-admin.site.register(Options)
+
 admin.site.register(Takes)
 admin.site.register(Makes)
 
