@@ -67,9 +67,12 @@ class _StudQuizState extends State<StudQuiz> {
         if (quizset.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           quizset.add(-1);
+          setState(() {});
         }
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        quizset.add(-1);
+        setState(() {});
       }
     }
   }
@@ -235,7 +238,7 @@ class _StudQuizState extends State<StudQuiz> {
                                 Icons.refresh,
                               ),
                               color: kMatte,
-                              tooltip: 'Filter Quizzes',
+                              tooltip: 'Refresh',
                               onPressed: () {
                                 refresh();
                               },
