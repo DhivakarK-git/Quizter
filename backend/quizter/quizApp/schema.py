@@ -9,6 +9,7 @@ import datetime
 import secrets
 import string
 from django.core.mail import send_mail
+from django.utils import timezone
 
 
 class CourseType(DjangoObjectType):
@@ -83,7 +84,12 @@ class TakesType(DjangoObjectType):
 
     @permissions_checker([IsAuthenticated])
     def resolve_quizzes(self, info, **kwargs):
-        return Quiz.objects.all()
+        now=timezone.now()
+        temp=Quiz.objects.all()
+        for i in range(len(temp)):
+            if(temp[i].start_time<now or now+datetime.timedelta(days=7)<temp[i].startTime):
+                temp.objects.exclude(pk=temp[i].id)
+        return temp
 
 class MakesType(DjangoObjectType):
     class Meta:
@@ -593,6 +599,7 @@ class CreateFAnswer(graphene.Mutation):
         answer_instance =   Answer(question=Question.objects.get(pk=input.quesId),answer_text=input.answer_text,correct = input.correct,feedback=input.feedback)
         answer_instance.save()
         return CreateFAnswer(ok=ok, answer=answer_instance)
+
 
 class DeleteFAnswer(graphene.Mutation):
     class Arguments:
