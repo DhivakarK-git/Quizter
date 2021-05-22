@@ -148,7 +148,7 @@ class Answer(models.Model):
 	class Meta:
 		verbose_name = "Option"
 		verbose_name_plural = "Options"
-		unique_together = ('question', 'answer_text',)
+		unique_together = ('question', 'answer_text','correct')
 
 	def __str__(self):
 		return self.answer_text
@@ -177,7 +177,7 @@ class Takes(models.Model):
 	times_taken = models.IntegerField(default=0,blank=True,null=True)
 	submission=models.CharField(max_length=30,blank=True,null=True)
 	nemail=models.BooleanField(default=False,blank=True,null=True)
-	marks=models.IntegerField(default=0,validators=[MinValueValidator(0),
+	marks=models.FloatField(default=0,validators=[MinValueValidator(0),
                                        MaxValueValidator(500)])
 	def clean(self):
 		if(str(self.user.type) == 'student'):

@@ -86,10 +86,11 @@ class TakesType(DjangoObjectType):
     def resolve_quizzes(self, info, **kwargs):
         now=timezone.now()
         temp=Quiz.objects.all()
+        result=[]
         for i in range(len(temp)):
-            if(temp[i].start_time<now or now+datetime.timedelta(days=7)<temp[i].startTime):
-                temp.objects.exclude(pk=temp[i].id)
-        return temp
+            if(temp[i].start_time>=now or now+datetime.timedelta(days=7)>=temp[i].start_time):
+                result.append(temp[i])
+        return result
 
 class MakesType(DjangoObjectType):
     class Meta:
@@ -653,15 +654,34 @@ class Calculate(graphene.Mutation):
     @permissions_checker([IsAuthenticated])
     def mutate(root, info,uid =None,qid =None ):
         ok = True
+        marks=0
         Question_list= Question.objects.filter(quiz=Quiz.objects.get(pk=qid))
         for i in Question_list:
-            if(not(i.question_type == "short")):
-                answers_list=Answer.objects.filter(question=i)
-                print(i.question_text)
-                print(answers_list)
-                options= (Options.objects.filter(question=i,user=UserT.objects.get(pk=uid)))
-                print(options)
-        return Caluclate(ok=ok)
+            if i.question_type == "sca" or i.question_type == "mca":
+                answers=Answer.objects.filter(question=i,correct=True)
+                options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
+                for j in options:
+                    if j.answer in answers:
+                        marks+=i.question_mark/len(answers)
+                    else:
+                        marks-=i.question_n_mark/len(answers)
+            elif i.question_type == "fitb" or i.question_type == "num":
+                answers=Answer.objects.filter(question=i,correct=True)
+                options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
+                for j in options:
+                    f=0
+                    for k in answers:
+                        if str(j.answer) == str(k):
+                            marks+=i.question_mark
+                            f+=1
+                            break
+                        print(k.user)
+                    if f==0:
+                        marks-=i.question_n_mark
+
+        takes=Takes.objects.filter(quiz=Quiz.objects.get(pk=qid),user=UserT.objects.get(pk=uid))
+        takes.update(marks=marks)
+        return Calculate(ok=ok)
 
 class Mutation(graphene.ObjectType):
     create_options = CreateOptions.Field()

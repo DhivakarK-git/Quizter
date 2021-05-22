@@ -39,41 +39,40 @@ class _StudQuizState extends State<StudQuiz> {
         ));
     if (quiz.hasException) {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      quizset = [-1];
+      setState(() {});
     } else {
       try {
-        setState(() {
-          userId = int.parse(quiz.data['me']['usert']['id']);
-          var quizs = quiz.data['me']['usert']['takesSet'][0]['quizzes'];
-          for (int i = 0; i < quizs.length; i++) {
-            var takers = quizs[i]['takers'];
-            var user = [], times = [], start = [];
-            for (int j = 0; j < takers.length; j++) {
-              user.add(int.parse(takers[j]['user']['id']));
-              times.add(takers[j]['timesTaken']);
-              start.add(takers[j]['startTime']);
-            }
-            if (user.contains(userId) &&
-                valDate(quizs[i]['startTime']) &&
-                times[user.indexOf(userId)] < quizs[i]['timesCanTake']) {
-              quizset.add(quizs[i]);
-              try {
-                starttime.add(changedate(start[user.indexOf(userId)]));
-              } catch (e) {
-                starttime.add("-1");
-              }
+        userId = int.parse(quiz.data['me']['usert']['id']);
+        var quizs = quiz.data['me']['usert']['takesSet'][0]['quizzes'];
+        for (int i = 0; i < quizs.length; i++) {
+          var takers = quizs[i]['takers'];
+          var user = [], times = [], start = [];
+          for (int j = 0; j < takers.length; j++) {
+            user.add(int.parse(takers[j]['user']['id']));
+            times.add(takers[j]['timesTaken']);
+            start.add(takers[j]['startTime']);
+          }
+          if (user.contains(userId) &&
+              valDate(quizs[i]['startTime']) &&
+              times[user.indexOf(userId)] < quizs[i]['timesCanTake']) {
+            quizset.add(quizs[i]);
+            try {
+              starttime.add(changedate(start[user.indexOf(userId)]));
+            } catch (e) {
+              starttime.add("-1");
             }
           }
-        });
+        }
         if (quizset.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           quizset.add(-1);
-          setState(() {});
         }
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         quizset.add(-1);
-        setState(() {});
       }
+      setState(() {});
     }
   }
 
@@ -190,7 +189,7 @@ class _StudQuizState extends State<StudQuiz> {
               ),
               backgroundColor: kMatte,
               content: Text(
-                'Your quiz was auto submitted.\n\nNote:\tIn case, the last question you have been working on was a short answer, numerical or fill in the blanks; it may have not been saved.',
+                'Your quiz was auto submitted.\n\nNote:   In case, the last question you have been working on was a short answer, numerical or fill in the blanks; it may have not been saved.',
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
