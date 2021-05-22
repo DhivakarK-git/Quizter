@@ -642,6 +642,26 @@ class DeleteNotification(graphene.Mutation):
             return DeleteNotification(ok=ok, Notification=notification_instance)
         return DeleteNotification(ok=ok, Notification=None)
 
+class Calculate(graphene.Mutation):
+    class Arguments:
+        uid = graphene.ID(required=True)
+        qid = graphene.ID(required=True)
+
+    ok = graphene.Boolean()
+
+    @staticmethod
+    @permissions_checker([IsAuthenticated])
+    def mutate(root, info,uid =None,qid =None ):
+        ok = True
+        Question_list= Question.objects.filter(quiz=Quiz.objects.get(pk=qid))
+        for i in Question_list:
+            if(not(i.question_type == "short")):
+                answers_list=Answer.objects.filter(question=i)
+                print(i.question_text)
+                print(answers_list)
+                options= (Options.objects.filter(question=i,user=UserT.objects.get(pk=uid)))
+                print(options)
+        return Caluclate(ok=ok)
 
 class Mutation(graphene.ObjectType):
     create_options = CreateOptions.Field()
@@ -667,6 +687,7 @@ class Mutation(graphene.ObjectType):
     delete_notification=DeleteNotification.Field()
     check_email=CheckEmail.Field()
     failedlogin=FailedLogin.Field()
+    calculate=Calculate.Field()
     change_password=ChangePassword.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
