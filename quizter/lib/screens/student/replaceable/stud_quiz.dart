@@ -53,7 +53,6 @@ class _StudQuizState extends State<StudQuiz> {
             times.add(takers[j]['timesTaken']);
             start.add(takers[j]['startTime']);
           }
-          print(quizs[i]['startTime']);
           if (user.contains(userId) &&
               valDate(quizs[i]['endTime']) &&
               times[user.indexOf(userId)] < quizs[i]['timesCanTake']) {

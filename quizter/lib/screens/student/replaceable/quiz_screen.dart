@@ -10,6 +10,7 @@ import 'package:animations/animations.dart';
 import 'dart:async';
 import 'package:quizter/widgets/option_button.dart';
 import 'package:quizter/widgets/ques_button.dart';
+import 'dart:math';
 
 class QuizScreen extends StatefulWidget {
   final int id;
@@ -55,15 +56,23 @@ class _QuizScreenState extends State<QuizScreen> {
       if (temp['questions'].length != 0) {
         if (access == temp['accessCode']) {
           quesset = temp['questions'];
+          linear = temp['linear'];
+          shuffle = temp['shuffle'];
+          if (shuffle) {
+            var random = new Random();
+            for (var i = quesset.length - 1; i > 0; i--) {
+              var n = random.nextInt(i + 1);
+              var temp = quesset[i];
+              quesset[i] = quesset[n];
+              quesset[n] = temp;
+            }
+          }
           colors = List<int>.generate(quesset.length, (int index) => 0);
           proceed = true;
           past = [];
           ans = (await getAnswerText(int.parse(quesset[index]['id'])))
               .replaceAll("</*n>", "\n");
-          linear = temp['linear'];
-          shuffle = temp['shuffle'];
-          print(linear);
-          print(shuffle);
+
           for (int i = 0; i < quesset[index]['answers'].length; i++)
             past.add(int.parse(quesset[index]['answers'][i]['id']));
           current = List<int>.generate(
@@ -661,65 +670,69 @@ class _QuizScreenState extends State<QuizScreen> {
                                             OptionButton(
                                               (i + 1).toString(),
                                               () async {
-                                                int sum = current.fold(
-                                                    0,
-                                                    (previous, current) =>
-                                                        previous + current);
+                                                if (!linear) {
+                                                  int sum = current.fold(
+                                                      0,
+                                                      (previous, current) =>
+                                                          previous + current);
 
-                                                if (colors[index] != 3 &&
-                                                    sum > 0)
-                                                  colors[index] = 1;
-                                                else if (colors[index] != 3 &&
-                                                    answer.isNotEmpty)
-                                                  colors[index] = 1;
-                                                else if (colors[index] != 3)
-                                                  colors[index] = 2;
-                                                await savequestion(
-                                                    int.parse(
-                                                        quesset[index]['id']),
-                                                    past,
-                                                    current,
-                                                    quesset);
-                                                direction = true;
-                                                if (index > i)
-                                                  direction = false;
-                                                else if (index < i)
+                                                  if (colors[index] != 3 &&
+                                                      sum > 0)
+                                                    colors[index] = 1;
+                                                  else if (colors[index] != 3 &&
+                                                      answer.isNotEmpty)
+                                                    colors[index] = 1;
+                                                  else if (colors[index] != 3)
+                                                    colors[index] = 2;
+                                                  await savequestion(
+                                                      int.parse(
+                                                          quesset[index]['id']),
+                                                      past,
+                                                      current,
+                                                      quesset);
                                                   direction = true;
-                                                index = i;
-                                                if (!(quesset[index]
-                                                            ['questionType'] ==
-                                                        'FITB' ||
-                                                    quesset[index]
-                                                            ['questionType'] ==
-                                                        'NUM' ||
-                                                    quesset[index]
-                                                            ['questionType'] ==
-                                                        'SHORT')) {
-                                                  past = [];
-                                                  for (int i = 0;
-                                                      i <
+                                                  if (index > i)
+                                                    direction = false;
+                                                  else if (index < i)
+                                                    direction = true;
+                                                  index = i;
+                                                  if (!(quesset[index][
+                                                              'questionType'] ==
+                                                          'FITB' ||
+                                                      quesset[index][
+                                                              'questionType'] ==
+                                                          'NUM' ||
+                                                      quesset[index][
+                                                              'questionType'] ==
+                                                          'SHORT')) {
+                                                    past = [];
+                                                    for (int i = 0;
+                                                        i <
+                                                            quesset[index]
+                                                                    ['answers']
+                                                                .length;
+                                                        i++)
+                                                      past.add(int.parse(
                                                           quesset[index]
-                                                                  ['answers']
-                                                              .length;
-                                                      i++)
-                                                    past.add(int.parse(
-                                                        quesset[index]
-                                                                ['answers'][i]
-                                                            ['id']));
-                                                  current = List<int>.generate(
-                                                      quesset[index]['answers']
-                                                          .length,
-                                                      (int index) => 0);
-                                                } else
-                                                  ans = (await getAnswerText(
-                                                          int.parse(
-                                                              quesset[index]
-                                                                  ['id'])))
-                                                      .replaceAll(
-                                                          "</*n>", "\n");
-                                                ;
-                                                await getOptions(int.parse(
-                                                    quesset[index]['id']));
+                                                                  ['answers'][i]
+                                                              ['id']));
+                                                    current =
+                                                        List<int>.generate(
+                                                            quesset[index]
+                                                                    ['answers']
+                                                                .length,
+                                                            (int index) => 0);
+                                                  } else
+                                                    ans = (await getAnswerText(
+                                                            int.parse(
+                                                                quesset[index]
+                                                                    ['id'])))
+                                                        .replaceAll(
+                                                            "</*n>", "\n");
+                                                  ;
+                                                  await getOptions(int.parse(
+                                                      quesset[index]['id']));
+                                                }
                                               },
                                               colors[i] == 0
                                                   ? kFrost
