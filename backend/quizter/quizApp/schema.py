@@ -656,31 +656,34 @@ class Calculate(graphene.Mutation):
         ok = True
         marks=0
         Question_list= Question.objects.filter(quiz=Quiz.objects.get(pk=qid))
-        for i in Question_list:
-            if i.question_type == "sca" or i.question_type == "mca":
-                answers=Answer.objects.filter(question=i,correct=True)
-                options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
-                for j in options:
-                    if j.answer in answers:
-                        marks+=i.question_mark/len(answers)
-                    else:
-                        marks-=i.question_n_mark/len(answers)
-            elif i.question_type == "fitb" or i.question_type == "num":
-                answers=Answer.objects.filter(question=i,correct=True)
-                options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
-                for j in options:
-                    f=0
-                    for k in answers:
-                        if str(j.answer) == str(k):
-                            marks+=i.question_mark
-                            f+=1
-                            break
-                        print(k.user)
-                    if f==0:
-                        marks-=i.question_n_mark
+        try:
+            for i in Question_list:
+                if i.question_type == "sca" or i.question_type == "mca":
+                    answers=Answer.objects.filter(question=i,correct=True)
+                    options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
+                    for j in options:
+                        if j.answer in answers:
+                            marks+=i.question_mark/len(answers)
+                        else:
+                            marks-=i.question_n_mark/len(answers)
+                elif i.question_type == "fitb" or i.question_type == "num":
+                    answers=Answer.objects.filter(question=i,correct=True)
+                    options= Options.objects.filter(question=i,user=UserT.objects.get(pk=uid))
+                    for j in options:
+                        f=0
+                        for k in answers:
+                            if str(j.answer) == str(k):
+                                marks+=i.question_mark
+                                f+=1
+                                break
+                            print(k.user)
+                        if f==0:
+                            marks-=i.question_n_mark
 
-        takes=Takes.objects.filter(quiz=Quiz.objects.get(pk=qid),user=UserT.objects.get(pk=uid))
-        takes.update(marks=marks)
+            takes=Takes.objects.filter(quiz=Quiz.objects.get(pk=qid),user=UserT.objects.get(pk=uid))
+            takes.update(marks=marks)
+        except:
+            ok=False
         return Calculate(ok=ok)
 
 class Mutation(graphene.ObjectType):
