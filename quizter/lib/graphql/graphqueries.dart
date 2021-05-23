@@ -208,6 +208,8 @@ me{
           accessCode
           duration
           endTime
+          linear
+          shuffle
           questions {
             id
             questionText
@@ -351,8 +353,8 @@ mutation {
           }
           startTime
           endTime
-          duration
           linear
+          duration
           marks
           timesCanTake
           takers {

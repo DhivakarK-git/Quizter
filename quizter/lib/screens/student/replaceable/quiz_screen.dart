@@ -26,7 +26,11 @@ class _QuizScreenState extends State<QuizScreen> {
   GraphQueries gq = new GraphQueries();
   GraphQLClient _quiz;
   var quesset = [], optset = [], current = [], past = [], colors = [];
-  bool proceed = false, direction = true, side = false;
+  bool proceed = false,
+      direction = true,
+      side = false,
+      linear = false,
+      shuffle = false;
   int index = 0, userId = -1, f = 0;
   double _start = 1, _progress = 0;
   String answer = "", ans = "";
@@ -56,7 +60,10 @@ class _QuizScreenState extends State<QuizScreen> {
           past = [];
           ans = (await getAnswerText(int.parse(quesset[index]['id'])))
               .replaceAll("</*n>", "\n");
-
+          linear = temp['linear'];
+          shuffle = temp['shuffle'];
+          print(linear);
+          print(shuffle);
           for (int i = 0; i < quesset[index]['answers'].length; i++)
             past.add(int.parse(quesset[index]['answers'][i]['id']));
           current = List<int>.generate(
@@ -980,7 +987,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       children: [
                         Row(
                           children: [
-                            if (index != 0)
+                            if (index != 0 && !linear)
                               QuesButton(
                                   Icon(
                                     Icons.chevron_left,
@@ -1028,7 +1035,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                       int.parse(quesset[index]['id']));
                                 }
                               }, kGlacier, "Previous"),
-                            if (index != 0)
+                            if (index != 0 && !linear)
                               SizedBox(
                                 width: 10.0,
                               ),

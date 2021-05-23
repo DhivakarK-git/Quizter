@@ -88,7 +88,7 @@ class TakesType(DjangoObjectType):
         temp=Quiz.objects.all()
         result=[]
         for i in range(len(temp)):
-            if(temp[i].start_time>=now or now+datetime.timedelta(days=7)>=temp[i].start_time):
+            if(temp[i].end_time>=now or now+datetime.timedelta(days=7)>=temp[i].end_time):
                 result.append(temp[i])
         return result
 
