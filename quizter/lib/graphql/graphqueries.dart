@@ -290,6 +290,54 @@ me{
     ''';
   }
 
+  String courselist(){
+    return '''
+ {
+  me {
+    usert {
+      belongsSet {
+        clas {
+          className
+          teachesSet {
+            course {
+              courseId
+              courseName
+            }
+          }
+        }
+        user {
+          id
+          takesSet {
+            quizzes {
+              quizName
+              course {
+                courseId
+              }
+              marks
+              timesCanTake
+              takers {
+                user {
+                  id
+                }
+                marks
+                timesTaken
+              }
+            }
+          }
+          user {
+            username
+            firstName
+            lastName
+            email
+          }
+        }
+      }
+    }
+  }
+}
+''';
+  }
+
   String getEQuiz(int quizid) {
     return '''
 {

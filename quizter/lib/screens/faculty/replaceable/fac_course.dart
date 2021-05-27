@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:quizter/constants.dart';
@@ -72,6 +71,7 @@ class _FacCourseState extends State<FacCourse> {
               temp[i]['clas']['belongsSet'],
             ]);
           }
+          print(courseset);
         });
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
