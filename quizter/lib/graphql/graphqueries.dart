@@ -461,6 +461,7 @@ mutation{
                     user {
                       id
                     }
+                    marks
                     timesTaken
                   }
                 }

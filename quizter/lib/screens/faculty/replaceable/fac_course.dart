@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:quizter/constants.dart';
@@ -325,7 +326,7 @@ class _FacCourseState extends State<FacCourse> {
                                               Expanded(
                                                 flex: 4,
                                                 child: Text(
-                                                  "Total Marks",
+                                                  "Marks",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1
@@ -393,7 +394,7 @@ class _FacCourseState extends State<FacCourse> {
                                                   Expanded(
                                                     flex: 4,
                                                     child: Text(
-                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      "${findm(i, j)} / ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodyText1
@@ -591,6 +592,25 @@ class _FacCourseState extends State<FacCourse> {
             .toString();
     return '0';
   }
+  String findm(i, j) {
+    var check=int.parse(find(i,j));
+    if(check !=0){
+    var user = classlist[4][i]['user']['id'];
+    var temp = classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'];
+    for (int k = 0; k < temp.length; k++)
+      if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
+              ['user']['id'] ==
+          user)
+        return classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
+                ['marks']
+            .toString();
+    return '-';
+    }
+    else{
+      return '-';
+    }
+  }
+  
 
   Widget cardQuiz(int index, BuildContext context) {
     return Card(
