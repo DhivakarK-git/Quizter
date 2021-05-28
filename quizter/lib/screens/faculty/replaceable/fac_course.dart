@@ -71,7 +71,6 @@ class _FacCourseState extends State<FacCourse> {
               temp[i]['clas']['belongsSet'],
             ]);
           }
-          print(courseset);
         });
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -302,7 +301,7 @@ class _FacCourseState extends State<FacCourse> {
                                                 CrossAxisAlignment.end,
                                             children: [
                                               Expanded(
-                                                flex: 2,
+                                                flex: 4,
                                                 child: Text(
                                                   "Quiz Name",
                                                   style: Theme.of(context)
@@ -324,9 +323,20 @@ class _FacCourseState extends State<FacCourse> {
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 4,
+                                                flex: 2,
                                                 child: Text(
                                                   "Marks",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          color: kGlacier),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  "Total Marks",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1
@@ -370,7 +380,7 @@ class _FacCourseState extends State<FacCourse> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Expanded(
-                                                    flex: 2,
+                                                    flex: 4,
                                                     child: Text(
                                                       "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
                                                       style: Theme.of(context)
@@ -392,9 +402,9 @@ class _FacCourseState extends State<FacCourse> {
                                                     ),
                                                   ),
                                                   Expanded(
-                                                    flex: 4,
+                                                    flex: 2,
                                                     child: Text(
-                                                      "${findm(i, j)} / ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      "${findm(i, j)}",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodyText1
@@ -402,6 +412,18 @@ class _FacCourseState extends State<FacCourse> {
                                                               color: kGlacier),
                                                     ),
                                                   ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: kGlacier),
+                                                    ),
+                                                  ),
+                                                  
                                                   Icon(
                                                     expanded[i] == 1
                                                         ? Icons.arrow_drop_up
@@ -607,7 +629,7 @@ class _FacCourseState extends State<FacCourse> {
     return '-';
     }
     else{
-      return '-';
+      return 'N/A';
     }
   }
   

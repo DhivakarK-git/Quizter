@@ -188,49 +188,8 @@ class _StudCourseState extends State<StudCourse> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      "Roll No.",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      "Name",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      "Email",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    color: kIgris,
-                                  ),
-                                ],
+                                
                               ),
-                            ),
-                            Divider(
-                              color: kGlacier,
-                              thickness: 1,
-                              endIndent: 16,
-                              indent: 16,
                             ),
                             for (int i = 0; i < classlist[4].length; i++)
                               Padding(
@@ -238,64 +197,7 @@ class _StudCourseState extends State<StudCourse> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['username']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 4,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['firstName']} ${classlist[4][i]['user']['user']['lastName']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 4,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['email']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              expanded[i] =
-                                                  expanded[i] == 1 ? 0 : 1;
-                                            });
-                                          },
-                                          child: Icon(
-                                            expanded[i] == 1
-                                                ? Icons.arrow_drop_up
-                                                : Icons.arrow_drop_down,
-                                            color: kGlacier,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (expanded[i] == 1)
-                                      Divider(
-                                        color: kFrost,
-                                        thickness: 1,
-                                      ),
-                                    if (expanded[i] == 1)
+                                    if (true)
                                       Column(
                                         children: [
                                           Row(
@@ -305,7 +207,7 @@ class _StudCourseState extends State<StudCourse> {
                                                 CrossAxisAlignment.end,
                                             children: [
                                               Expanded(
-                                                flex: 2,
+                                                flex: 4,
                                                 child: Text(
                                                   "Quiz Name",
                                                   style: Theme.of(context)
@@ -327,7 +229,7 @@ class _StudCourseState extends State<StudCourse> {
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 4,
+                                                flex: 2,
                                                 child: Text(
                                                   "Marks",
                                                   style: Theme.of(context)
@@ -337,11 +239,16 @@ class _StudCourseState extends State<StudCourse> {
                                                           color: kGlacier),
                                                 ),
                                               ),
-                                              Icon(
-                                                expanded[i] == 1
-                                                    ? Icons.arrow_drop_up
-                                                    : Icons.arrow_drop_down,
-                                                color: kIgris,
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  "Total Marks",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          color: kGlacier),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -351,7 +258,7 @@ class _StudCourseState extends State<StudCourse> {
                                       color: kQuiz,
                                       thickness: 1,
                                     ),
-                                    if (expanded[i] == 1)
+                                    if (true)
                                       for (int j = 0;
                                           j <
                                               (classlist[4][i]['user']
@@ -373,7 +280,7 @@ class _StudCourseState extends State<StudCourse> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Expanded(
-                                                    flex: 2,
+                                                    flex: 4,
                                                     child: Text(
                                                       "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
                                                       style: Theme.of(context)
@@ -395,9 +302,9 @@ class _StudCourseState extends State<StudCourse> {
                                                     ),
                                                   ),
                                                   Expanded(
-                                                    flex: 4,
+                                                    flex: 2,
                                                     child: Text(
-                                                      "${findm(i, j)} / ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      "${findm(i, j)}",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodyText1
@@ -405,21 +312,21 @@ class _StudCourseState extends State<StudCourse> {
                                                               color: kGlacier),
                                                     ),
                                                   ),
-                                                  Icon(
-                                                    expanded[i] == 1
-                                                        ? Icons.arrow_drop_up
-                                                        : Icons.arrow_drop_down,
-                                                    color: kIgris,
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: kGlacier),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ],
                                           ),
-                                    if (expanded[i] == 1)
-                                      Divider(
-                                        color: kFrost,
-                                        thickness: 1,
-                                      ),
                                   ],
                                 ),
                               ),
@@ -610,7 +517,7 @@ class _StudCourseState extends State<StudCourse> {
     return '-';
     }
     else{
-      return '-';
+      return 'N/A';
     }
   }
   
