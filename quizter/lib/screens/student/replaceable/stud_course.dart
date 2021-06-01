@@ -25,7 +25,6 @@ class _StudCourseState extends State<StudCourse> {
   var courseset = [], classlist = [], expanded = [];
   bool showquiz = false;
   StudQuiz axxer = new StudQuiz();
-  
 
   void getCourses() async {
     final QueryResult quiz = await _quiz.queryA(gq.courselist());
@@ -64,19 +63,17 @@ class _StudCourseState extends State<StudCourse> {
                   value = "CSE " + value[1];
                   val = "Fourth Year";
                   break;
-
               }
-              
+
               for (int j = 0; j < temp[i]['clas']['teachesSet'].length; j++)
-              courseset.add([
-              temp[i]['clas']['teachesSet'][j]['course']['courseId'],
-              temp[i]['clas']['teachesSet'][j]['course']['courseName'],
-              value,
-              val,
-              temp,
-            ]);
+                courseset.add([
+                  temp[i]['clas']['teachesSet'][j]['course']['courseId'],
+                  temp[i]['clas']['teachesSet'][j]['course']['courseName'],
+                  value,
+                  val,
+                  temp,
+                ]);
             } catch (e) {}
-            
           }
         });
       } catch (exception1) {
@@ -192,7 +189,6 @@ class _StudCourseState extends State<StudCourse> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                
                               ),
                             ),
                             for (int i = 0; i < classlist[4].length; i++)
@@ -201,158 +197,151 @@ class _StudCourseState extends State<StudCourse> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (true)
-                                      Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Expanded(
-                                                flex: 4,
-                                                child: Text(
-                                                  "Quiz Name",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Expanded(
+                                              flex: 4,
+                                              child: Text(
+                                                "Quiz Name",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(color: kGlacier),
                                               ),
-                                              Expanded(
-                                                flex: 4,
-                                                child: Text(
-                                                  "No. of Submissions Made",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
+                                            ),
+                                            Expanded(
+                                              flex: 4,
+                                              child: Text(
+                                                "No. of Submissions Made",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(color: kGlacier),
                                               ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  "Marks",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                "Marks",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(color: kGlacier),
                                               ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  "Total Marks",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                "Total Marks",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(color: kGlacier),
                                               ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  "Status",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
+                                            ),
+                                            Expanded(
+                                              flex: 4,
+                                              child: Text(
+                                                "Status",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(color: kGlacier),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                     Divider(
-                                      color: kQuiz,
+                                      color: kGlacier,
                                       thickness: 1,
                                     ),
-                                    if (true)
-                                      for (int j = 0;
-                                          j <
-                                              (classlist[4][i]['user']
-                                                          ['takesSet'][0]
-                                                      ['quizzes'])
-                                                  .length;
-                                          j++)
-                                        if (classlist[4][i]['user']['takesSet']
-                                                    [0]['quizzes'][j]['course']
-                                                ['courseId'] ==
-                                            classlist[0])
-                                          Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Text(
-                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
+                                    for (int j = 0;
+                                        j <
+                                            (classlist[4][i]['user']['takesSet']
+                                                    [0]['quizzes'])
+                                                .length;
+                                        j++)
+                                      if (classlist[4][i]['user']['takesSet'][0]
+                                                  ['quizzes'][j]['course']
+                                              ['courseId'] ==
+                                          classlist[0])
+                                        Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Text(
+                                                    "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            color: kGlacier),
                                                   ),
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Text(
-                                                      "${find(i, j)} out of ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake']}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
+                                                ),
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Text(
+                                                    "${find(i, j)} out of ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake']}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            color: kGlacier),
                                                   ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      "${findm(i, j)}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    "${findm(i, j)}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            color: kGlacier),
                                                   ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            color: kGlacier),
                                                   ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Text(
-                                                      "${findst(i, j)}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: clr(i,j),
-                                                    ),
+                                                ),
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Text(
+                                                    "${findst(i, j)}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                          color: clr(i, j),
+                                                        ),
                                                   ),
-                                                  )],
-                                              ),
-                                            ],
-                                          ),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                   ],
                                 ),
                               ),
@@ -528,93 +517,88 @@ class _StudCourseState extends State<StudCourse> {
             .toString();
     return '0';
   }
+
   String changedate(String dt) {
     return DateTime.parse(dt)
         .add(const Duration(hours: 5, minutes: 30))
         .toString();
   }
+
   String findst(i, j) {
-    DateTime st=DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['startTime'].toString().substring(0, 16)));
-    DateTime et=DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'].toString().substring(0, 16)));
-    var ppr=axxer.createState().valTime(st.toString(),et.toString());
-    var check=int.parse(find(i,j));
-    if(ppr)
-    {
-      if(check==0)
-      {
+    DateTime st = DateTime.parse(changedate(classlist[4][i]['user']['takesSet']
+            [0]['quizzes'][j]['startTime']
+        .toString()
+        .substring(0, 16)));
+    DateTime et = DateTime.parse(changedate(classlist[4][i]['user']['takesSet']
+            [0]['quizzes'][j]['endTime']
+        .toString()
+        .substring(0, 16)));
+    var ppr = axxer.createState().valTime(st.toString(), et.toString());
+    var check = int.parse(find(i, j));
+    if (ppr) {
+      if (check == 0) {
         return "Active";
       }
-      if(check>0 && check< classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
-      {
+      if (check > 0 &&
+          check <
+              classlist[4][i]['user']['takesSet'][0]['quizzes'][j]
+                  ['timesCanTake']) {
         return "Submitted & Active";
-
       }
-      if(check == classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
-      {
+      if (check ==
+          classlist[4][i]['user']['takesSet'][0]['quizzes'][j]
+              ['timesCanTake']) {
         return "Completed";
-
       }
-    }
-    else{
-      if(check==0)
-      {
-        DateTime p =DateTime.parse(DateTime.now().toString().substring(0, 16));
-        if(st.isAfter(p)){
+    } else {
+      if (check == 0) {
+        DateTime p = DateTime.parse(DateTime.now().toString().substring(0, 16));
+        if (st.isAfter(p)) {
           return "Upcoming";
-        }
-        else
-        {
+        } else {
           return "Expired";
         }
       }
-      if(check == classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
-      {
+      if (check ==
+          classlist[4][i]['user']['takesSet'][0]['quizzes'][j]
+              ['timesCanTake']) {
         return "Completed";
-
       }
-      if(check>0)
-      {
+      if (check > 0) {
         return "Submitted";
-
       }
-
     }
   }
-  Color clr(i,j)
-  {
-    var x=findst(i, j);
-    if(x=="Active" || x=="Submitted & Active" || x=="Submitted")
-    return kGreen;
 
-    if(x=="Expired")
-    return kMatte;
+  Color clr(i, j) {
+    var x = findst(i, j);
+    if (x == "Active" || x == "Submitted & Active" || x == "Submitted")
+      return kGreen;
 
-    if(x=="Completed")
-    return kGlacier;
+    if (x == "Expired") return kMatte;
 
-    if(x=="Upcoming")
-    return kFrost;
+    if (x == "Completed") return kGlacier;
+
+    if (x == "Upcoming") return kFrost;
   }
 
   String findm(i, j) {
-    var check=int.parse(find(i,j));
-    if(check !=0){
-    var user = classlist[4][i]['user']['id'];
-    var temp = classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'];
-    for (int k = 0; k < temp.length; k++)
-      if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
-              ['user']['id'] ==
-          user)
-        return classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
-                ['marks']
-            .toString();
-    return '-';
-    }
-    else{
+    var check = int.parse(find(i, j));
+    if (check != 0) {
+      var user = classlist[4][i]['user']['id'];
+      var temp = classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'];
+      for (int k = 0; k < temp.length; k++)
+        if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
+                ['user']['id'] ==
+            user)
+          return classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers']
+                  [k]['marks']
+              .toString();
+      return '-';
+    } else {
       return 'N/A';
     }
   }
-  
 
   Widget cardQuiz(int index, BuildContext context) {
     return Card(
