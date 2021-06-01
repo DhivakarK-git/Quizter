@@ -263,7 +263,6 @@ class _StudQuizState extends State<StudQuiz> {
                       height: MediaQuery.of(context).size.height - 208,
                       child: quizset.isEmpty
                           ? GridView.builder(
-                              //TODO: fix card overflow
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 32.0),
                               itemCount: 6,

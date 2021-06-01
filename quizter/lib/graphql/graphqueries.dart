@@ -205,11 +205,6 @@ me{
       takesSet {
         quiz(id: $quizid) {
           quizName
-          accessCode
-          duration
-          endTime
-          linear
-          shuffle
           questions {
             id
             questionText
@@ -290,58 +285,7 @@ me{
     ''';
   }
 
-  String Resultlist(){
-    return '''
-    {
-  me {
-    usert {
-      belongsSet {
-        clas {
-          className
-          teachesSet {
-            course {
-              courseId
-              courseName
-            }
-          }
-        }
-        user {
-          id
-          takesSet {
-            quizzes {
-              quizName
-              startTime
-              endTime
-              course {
-                courseId
-              }
-              marks
-              timesCanTake
-              takers {
-                user {
-                  id
-                }
-                marks
-                timesTaken
-              }
-            }
-          }
-          user {
-            username
-            firstName
-            lastName
-            email
-          }
-        }
-      }
-    }
-  }
-}
-
-    ''';
-  }
-
-  String courselist(){
+  String courselist() {
     return '''
  {
   me {
@@ -360,6 +304,7 @@ me{
           id
           takesSet {
             quizzes {
+              id
               quizName
               startTime
               endTime
@@ -388,7 +333,58 @@ me{
     }
   }
 }
+''';
+  }
 
+  String resultlist() {
+    return '''
+ {
+  me {
+    usert {
+      belongsSet {
+        clas {
+          className
+          teachesSet {
+            course {
+              courseId
+              courseName
+            }
+          }
+        }
+        user {
+          id
+          takesSet {
+            quizzes {
+              id
+              quizName
+              startTime
+              endTime
+              publishTime
+              course {
+                courseId
+              }
+              marks
+              timesCanTake
+              takers {
+                user {
+                  id
+                }
+                marks
+                timesTaken
+              }
+            }
+          }
+          user {
+            username
+            firstName
+            lastName
+            email
+          }
+        }
+      }
+    }
+  }
+}
 ''';
   }
 
@@ -553,6 +549,7 @@ mutation{
               id
               takesSet {
                 quizzes {
+                  id
                   quizName
                   course{
                     courseId
