@@ -290,9 +290,9 @@ me{
     ''';
   }
 
-  String courselist(){
+  String Resultlist(){
     return '''
- {
+    {
   me {
     usert {
       belongsSet {
@@ -310,6 +310,8 @@ me{
           takesSet {
             quizzes {
               quizName
+              startTime
+              endTime
               course {
                 courseId
               }
@@ -335,6 +337,58 @@ me{
     }
   }
 }
+
+    ''';
+  }
+
+  String courselist(){
+    return '''
+ {
+  me {
+    usert {
+      belongsSet {
+        clas {
+          className
+          teachesSet {
+            course {
+              courseId
+              courseName
+            }
+          }
+        }
+        user {
+          id
+          takesSet {
+            quizzes {
+              quizName
+              startTime
+              endTime
+              course {
+                courseId
+              }
+              marks
+              timesCanTake
+              takers {
+                user {
+                  id
+                }
+                marks
+                timesTaken
+              }
+            }
+          }
+          user {
+            username
+            firstName
+            lastName
+            email
+          }
+        }
+      }
+    }
+  }
+}
+
 ''';
   }
 

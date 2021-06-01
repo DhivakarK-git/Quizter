@@ -98,8 +98,6 @@ class _StudQuizState extends State<StudQuiz> {
   }
 
   bool valTime(String dt, String et) {
-    dt = changedate(dt);
-    et = changedate(et);
     DateTime d = DateTime.parse(DateTime.now().toString().substring(0, 16));
     DateTime s = DateTime.parse(DateTime.parse(dt)
             .subtract(Duration(minutes: 1))
