@@ -8,6 +8,7 @@ import 'package:quizter/graphql/authentication/auth_graphql.dart';
 import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
+import 'package:quizter/screens/student/replaceable/stud_quiz.dart';
 
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
@@ -23,6 +24,8 @@ class _StudCourseState extends State<StudCourse> {
   GraphQLClient _quiz;
   var courseset = [], classlist = [], expanded = [];
   bool showquiz = false;
+  StudQuiz axxer = new StudQuiz();
+  
 
   void getCourses() async {
     final QueryResult quiz = await _quiz.queryA(gq.courselist());
@@ -84,6 +87,7 @@ class _StudCourseState extends State<StudCourse> {
 
   Widget swap() {
     ScrollController _icarus = new ScrollController();
+    var stat;
     if (showquiz) {
       return Padding(
         padding: EdgeInsets.fromLTRB(40.0, 24.0, 40.0, 0),
@@ -250,6 +254,17 @@ class _StudCourseState extends State<StudCourse> {
                                                           color: kGlacier),
                                                 ),
                                               ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  "Status",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          color: kGlacier),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ],
@@ -323,7 +338,18 @@ class _StudCourseState extends State<StudCourse> {
                                                               color: kGlacier),
                                                     ),
                                                   ),
-                                                ],
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      "${findst(i, j)}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: clr(i,j),
+                                                    ),
+                                                  ),
+                                                  )],
                                               ),
                                             ],
                                           ),
@@ -502,6 +528,74 @@ class _StudCourseState extends State<StudCourse> {
             .toString();
     return '0';
   }
+  String changedate(String dt) {
+    return DateTime.parse(dt)
+        .add(const Duration(hours: 5, minutes: 30))
+        .toString();
+  }
+  String findst(i, j) {
+    DateTime st=DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['startTime'].toString().substring(0, 16)));
+    DateTime et=DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'].toString().substring(0, 16)));
+    var ppr=axxer.createState().valTime(st.toString(),et.toString());
+    var check=int.parse(find(i,j));
+    if(ppr)
+    {
+      if(check==0)
+      {
+        return "Active";
+      }
+      if(check>0 && check< classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
+      {
+        return "Submitted & Active";
+
+      }
+      if(check == classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
+      {
+        return "Completed";
+
+      }
+    }
+    else{
+      if(check==0)
+      {
+        DateTime p =DateTime.parse(DateTime.now().toString().substring(0, 16));
+        if(st.isAfter(p)){
+          return "Upcoming";
+        }
+        else
+        {
+          return "Expired";
+        }
+      }
+      if(check == classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake'] )
+      {
+        return "Completed";
+
+      }
+      if(check>0)
+      {
+        return "Submitted";
+
+      }
+
+    }
+  }
+  Color clr(i,j)
+  {
+    var x=findst(i, j);
+    if(x=="Active" || x=="Submitted & Active" || x=="Submitted")
+    return kGreen;
+
+    if(x=="Expired")
+    return kMatte;
+
+    if(x=="Completed")
+    return kGlacier;
+
+    if(x=="Upcoming")
+    return kFrost;
+  }
+
   String findm(i, j) {
     var check=int.parse(find(i,j));
     if(check !=0){
