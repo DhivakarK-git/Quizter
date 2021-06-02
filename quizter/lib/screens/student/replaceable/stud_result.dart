@@ -610,20 +610,14 @@ class _StudResultState extends State<StudResult> {
                                     ),
                                     for (int j = 0;
                                         j <
-                                            (classlist[4][i]['user']['takesSet'][0]['quizzes'])
+                                            (classlist[4][i]['user']['takesSet']
+                                                    [0]['quizzes'])
                                                 .length;
                                         j++)
-                                      if (classlist[4][i]['user']['takesSet'][0]['quizzes']
-                                                  [j]['course']['courseId'] ==
-                                              classlist[0] &&
-                                          (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime']))
-                                                  .isBefore(DateTime.now()) ||
-                                              find(i, j) ==
-                                                  classlist[4][i]['user']
-                                                          ['takesSet'][0]['quizzes']
-                                                      [j]['timesCanTake']) &&
-                                          DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime']))
-                                              .isBefore(DateTime.now()))
+                                      if (classlist[4][i]['user']['takesSet'][0]
+                                                  ['quizzes'][j]['course']
+                                              ['courseId'] ==
+                                          classlist[0])
                                         Column(
                                           children: [
                                             Row(
@@ -668,29 +662,55 @@ class _StudResultState extends State<StudResult> {
                                                 ),
                                                 Expanded(
                                                   flex: 4,
-                                                  child: TextButton(
-                                                    onPressed: () async {
-                                                      result = classlist[4][i]
-                                                                  ['user']
-                                                              ['takesSet'][0]
-                                                          ['quizzes'][j];
-                                                      await getQuestions();
-                                                      showresult = true;
-                                                      setState(() {});
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                        shadowColor: kMatte,
-                                                        alignment: Alignment
-                                                            .centerLeft),
-                                                    child: Text(
-                                                      "Yes",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kFrost),
-                                                    ),
-                                                  ),
+                                                  child: (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
+                                                              find(i, j) ==
+                                                                  classlist[4][i]['user']['takesSet'][0]['quizzes'][j][
+                                                                      'timesCanTake']) &&
+                                                          DateTime.parse(changedate(classlist[4][i]['user']
+                                                                          ['takesSet'][0]
+                                                                      ['quizzes'][j]
+                                                                  ['publishTime']))
+                                                              .isBefore(DateTime.now())
+                                                      ? TextButton(
+                                                          onPressed: () async {
+                                                            result = classlist[4]
+                                                                            [i]
+                                                                        ['user']
+                                                                    ['takesSet']
+                                                                [
+                                                                0]['quizzes'][j];
+                                                            await getQuestions();
+                                                            showresult = true;
+                                                            setState(() {});
+                                                          },
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                                  shadowColor:
+                                                                      kMatte,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft),
+                                                          child: Text(
+                                                            "Yes",
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText1
+                                                                .copyWith(
+                                                                    color:
+                                                                        kFrost),
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          "No",
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyText1
+                                                              .copyWith(
+                                                                  color:
+                                                                      kFrost),
+                                                        ),
                                                 ),
                                                 Expanded(
                                                   flex: 4,
