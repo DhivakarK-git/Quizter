@@ -147,6 +147,7 @@ class _StudQuizState extends State<StudQuiz> {
 
   Widget swap() {
     if (showquiz) {
+      print(starttime);
       return QuizScreen(quizid, quizname, starttime[id], () async {
         quizid = -1;
         quizname = '';
@@ -381,6 +382,7 @@ class _StudQuizState extends State<StudQuiz> {
                                             dt = dt.substring(0, 10) +
                                                 'T' +
                                                 dt.substring(11);
+                                            starttime[index] = dt;
                                             final QueryResult quiz = await _quiz
                                                 .queryA(gq.updateStartTime(
                                                     userid: userId,
