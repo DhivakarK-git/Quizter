@@ -206,6 +206,10 @@ me{
         quiz(id: $quizid) {
           quizName
           accessCode
+          linear
+          shuffle
+          duration
+          endTime
           questions {
             id
             questionText
