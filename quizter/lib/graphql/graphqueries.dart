@@ -205,6 +205,7 @@ me{
       takesSet {
         quiz(id: $quizid) {
           quizName
+          accessCode
           questions {
             id
             questionText
