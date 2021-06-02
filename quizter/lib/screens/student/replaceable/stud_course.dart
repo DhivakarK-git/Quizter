@@ -8,7 +8,7 @@ import 'package:quizter/graphql/authentication/auth_graphql.dart';
 import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
-import 'package:quizter/screens/student/replaceable/stud_quiz.dart';
+
 
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
@@ -24,7 +24,7 @@ class _StudCourseState extends State<StudCourse> {
   GraphQLClient _quiz;
   var courseset = [], classlist = [], expanded = [];
   bool showquiz = false;
-  StudQuiz axxer = new StudQuiz();
+  
 
   void getCourses() async {
     final QueryResult quiz = await _quiz.queryA(gq.courselist());
@@ -524,6 +524,19 @@ class _StudCourseState extends State<StudCourse> {
         .toString();
   }
 
+  bool valTime(String dt, String et) {
+    DateTime d = DateTime.parse(DateTime.now().toString().substring(0, 16));
+    DateTime s = DateTime.parse(DateTime.parse(dt)
+            .subtract(Duration(minutes: 1))
+            .toString()
+            .substring(0, 16)),
+        e = DateTime.parse(DateTime.parse(et)
+            .add(Duration(minutes: 1))
+            .toString()
+            .substring(0, 16));
+    return ((e.isAfter(d) && s.isBefore(d)) ? true : false);
+  }
+
   String findst(i, j) {
     DateTime st = DateTime.parse(changedate(classlist[4][i]['user']['takesSet']
             [0]['quizzes'][j]['startTime']
@@ -533,7 +546,7 @@ class _StudCourseState extends State<StudCourse> {
             [0]['quizzes'][j]['endTime']
         .toString()
         .substring(0, 16)));
-    var ppr = axxer.createState().valTime(st.toString(), et.toString());
+    var ppr = valTime(st.toString(), et.toString());
     var check = int.parse(find(i, j));
     if (ppr) {
       if (check == 0) {
