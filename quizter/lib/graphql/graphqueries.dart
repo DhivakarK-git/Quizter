@@ -431,6 +431,52 @@ me{
 ''';
   }
 
+  String getSprofile()
+  {
+    return '''
+{
+  me {
+    usert {
+      id
+      belongsSet{
+        clas{
+          className
+        }
+      }
+      takesSet {
+        quizzes {
+          id
+          quizName
+          course {
+            courseId
+          }
+          startTime
+          endTime
+          linear
+          duration
+          marks
+          timesCanTake
+          takers {
+            user {
+              id
+            }
+            timesTaken
+            startTime
+          }
+        }
+      }
+      user{
+        username
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+}
+    ''';
+  }
+
   String calculate(int userId, int quizId) {
     return '''
 mutation {
