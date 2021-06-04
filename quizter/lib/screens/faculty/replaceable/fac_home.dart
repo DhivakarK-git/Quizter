@@ -23,19 +23,18 @@ class _FacHomeState extends State<FacHome> {
   GraphQueries gq = new GraphQueries();
   GraphQLClient _quiz;
   var quizset = [];
-  bool showquiz = false;
+  bool showquiz = false, show = false;
   int quizid = -1;
   String quizname = 'ERROR 404', accesscode = '';
-  var un,fn,ln,dept,email,qz;
+  var un, fn, ln, dept, email, qz;
 
   void getQuizes() async {
     final QueryResult quiz = await _quiz.queryA(gq.getFprofile());
-
-    un=quiz.data['me']['usert']['user']['username'].toString();
-    fn=quiz.data['me']['usert']['user']['firstName'].toString();
-    ln=quiz.data['me']['usert']['user']['lastName'].toString();
-    email=quiz.data['me']['usert']['user']['email'].toString();
-    qz=quiz.data['me']['usert']['makesSet'][0]['quizzes'].length;
+    un = quiz.data['me']['usert']['user']['username'].toString();
+    fn = quiz.data['me']['usert']['user']['firstName'].toString();
+    ln = quiz.data['me']['usert']['user']['lastName'].toString();
+    email = quiz.data['me']['usert']['user']['email'].toString();
+    qz = quiz.data['me']['usert']['makesSet'][0]['quizzes'].length;
     final snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 5),
@@ -58,12 +57,15 @@ class _FacHomeState extends State<FacHome> {
             for (int j = 0; j < takers.length; j++) {
               user.add(int.parse(takers[j]['user']['id']));
             }
-            DateTime sd=DateTime.parse(quizs[i]['startTime'].toString().substring(0,10));
-            DateTime nd=DateTime.parse(DateTime.now().toString().substring(0,10));
-            if (user.contains(userId) && sd==nd) {
+            DateTime sd = DateTime.parse(
+                quizs[i]['startTime'].toString().substring(0, 10));
+            DateTime nd =
+                DateTime.parse(DateTime.now().toString().substring(0, 10));
+            if (user.contains(userId) && sd == nd) {
               quizset.add(quizs[i]);
             }
           }
+          show = true;
         });
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -116,77 +118,102 @@ class _FacHomeState extends State<FacHome> {
     } else
       return Column(
         children: [
-          Expanded(child: Container(color: kFrost,
-          child: Column(
-            children: [
-              Row(
-                children: [
+          Expanded(
+              child: Container(
+            color: kFrost,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 40),
+                        child: Text('Profile ',
+                            style: Theme.of(context).textTheme.headline5),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(
+                  color: kIgris,
+                  thickness: 3,
+                ),
+                if (!show)
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:10,left:40),
-                      child: Text('Profile ',style:Theme.of(context).textTheme.headline4),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: kIgris,
+                      ),
                     ),
                   ),
-                ],
-              ),
-              Divider(
-                color: kIgris,
-                thickness: 3,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:20,left:40),
-                      child: Text('Username:  ${un}',style:Theme.of(context).textTheme.headline6),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:20,left:40),
-                      child: Text('Name:  ${fn} ${ln}',style:Theme.of(context).textTheme.headline6),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:20,left:40),
-                      child: Text('Email:  ${email}',style:Theme.of(context).textTheme.headline6),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:20,left:40),
-                      child: Text('Department:  CSE',style:Theme.of(context).textTheme.headline6),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:20,left:40),
-                      child: Text('Quizzes Created:  ${qz}',style:Theme.of(context).textTheme.headline6),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          )
-          ),
+                !show
+                    ? Container()
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20, left: 40),
+                              child: Text('Username:  ${un}',
+                                  style: Theme.of(context).textTheme.headline6),
+                            ),
+                          ),
+                        ],
+                      ),
+                !show
+                    ? Container()
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20, left: 40),
+                              child: Text('Name:  ${fn} ${ln}',
+                                  style: Theme.of(context).textTheme.headline6),
+                            ),
+                          ),
+                        ],
+                      ),
+                !show
+                    ? Container()
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20, left: 40),
+                              child: Text('Email:  ${email}',
+                                  style: Theme.of(context).textTheme.headline6),
+                            ),
+                          ),
+                        ],
+                      ),
+                !show
+                    ? Container()
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20, left: 40),
+                              child: Text('Department:  CSE',
+                                  style: Theme.of(context).textTheme.headline6),
+                            ),
+                          ),
+                        ],
+                      ),
+                !show
+                    ? Container()
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20, left: 40),
+                              child: Text('Quizzes Created:  ${qz}',
+                                  style: Theme.of(context).textTheme.headline6),
+                            ),
+                          ),
+                        ],
+                      ),
+              ],
+            ),
+          )),
           Expanded(
             child: Row(
               children: [
@@ -235,7 +262,8 @@ class _FacHomeState extends State<FacHome> {
                       SingleChildScrollView(
                         child: Container(
                             width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height/2 -122 ,
+                            height:
+                                MediaQuery.of(context).size.height / 2 - 122,
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: quizset.isEmpty
@@ -245,7 +273,8 @@ class _FacHomeState extends State<FacHome> {
                                           vertical: 8.0, horizontal: 32.0),
                                       itemCount: 6,
                                       scrollDirection: Axis.horizontal,
-                                      itemBuilder: (BuildContext context, int index) {
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
                                         return Card(
                                           color: kIgris,
                                           elevation: 2,
@@ -253,7 +282,8 @@ class _FacHomeState extends State<FacHome> {
                                             padding: EdgeInsets.all(16.0),
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
@@ -283,7 +313,8 @@ class _FacHomeState extends State<FacHome> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Container(
                                                       color: kQuiz,
@@ -299,7 +330,8 @@ class _FacHomeState extends State<FacHome> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Container(
                                                       color: kQuiz,
@@ -324,20 +356,24 @@ class _FacHomeState extends State<FacHome> {
                                           vertical: 8.0, horizontal: 32.0),
                                       itemCount: quizset.length,
                                       scrollDirection: Axis.horizontal,
-                                      
-                                      itemBuilder: (BuildContext context, int index) {
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
                                         return TextButton(
                                           onPressed: () {
-                                            quizid = int.parse(quizset[index]['id']);
-                                            quizname = quizset[index]['quizName'];
-                                            accesscode = quizset[index]['accessCode'];
+                                            quizid =
+                                                int.parse(quizset[index]['id']);
+                                            quizname =
+                                                quizset[index]['quizName'];
+                                            accesscode =
+                                                quizset[index]['accessCode'];
                                             showquiz = true;
                                             setState(() {});
                                           },
-                                          style:
-                                              TextButton.styleFrom(shadowColor: kMatte),
+                                          style: TextButton.styleFrom(
+                                              shadowColor: kMatte),
                                           child: kIsWeb
-                                              ? cardQuiz(index, context).moveUpOnHover
+                                              ? cardQuiz(index, context)
+                                                  .moveUpOnHover
                                               : cardQuiz(index, context),
                                         );
                                       }),

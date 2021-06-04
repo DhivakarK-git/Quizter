@@ -5,6 +5,59 @@ class RailNavigation extends StatelessWidget {
   final int index;
   final Function press;
   RailNavigation(this.index, this.press);
+  Future<void> _showHelp(context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(
+              'Help',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            IconButton(
+                icon: Icon(Icons.close),
+                color: kMatte,
+                alignment: Alignment.topRight,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ]),
+          backgroundColor: kGlacier,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+              child: Text(
+                "Designed and maintained by\nQuizter Team",
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+              child: Text(
+                "Contact Us",
+                style: Theme.of(context).textTheme.headline5,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
+              child: Text(
+                "+044-23456789\nquizterteam@gmail.com",
+                style: Theme.of(context).textTheme.bodyText1,
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
@@ -44,7 +97,9 @@ class RailNavigation extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.help_center_outlined),
             color: kMatte,
-            onPressed: () {},
+            onPressed: () {
+              _showHelp(context);
+            },
           ),
           Text(
             "Help",
@@ -60,6 +115,59 @@ class RailNavigation2 extends StatelessWidget {
   final int index;
   final Function press, create;
   RailNavigation2(this.index, this.press, this.create);
+  Future<void> _showHelp(context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(
+              'Help',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            IconButton(
+                icon: Icon(Icons.close),
+                color: kMatte,
+                alignment: Alignment.topRight,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ]),
+          backgroundColor: kGlacier,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+              child: Text(
+                "Designed and maintained by\nQuizter Team",
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+              child: Text(
+                "Contact Us",
+                style: Theme.of(context).textTheme.headline5,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
+              child: Text(
+                "+044-23456789\nquizterteam@gmail.com",
+                style: Theme.of(context).textTheme.bodyText1,
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
@@ -113,7 +221,9 @@ class RailNavigation2 extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.help_center_outlined),
             color: kMatte,
-            onPressed: () {},
+            onPressed: () {
+              _showHelp(context);
+            },
           ),
           Text(
             "Help",
