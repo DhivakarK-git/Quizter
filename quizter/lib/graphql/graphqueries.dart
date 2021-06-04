@@ -477,6 +477,52 @@ me{
     ''';
   }
 
+  String getFprofile()
+  {
+    return '''
+   {
+  me {
+    usert {
+      id
+      teachesSet{
+        clas
+        {
+          className
+        }
+      }
+      makesSet {
+        quizzes {
+          id
+          quizName
+          accessCode
+          course {
+            courseId
+          }
+          startTime
+          endTime
+          duration
+          linear
+          marks
+          makers {
+            user {
+              id
+            }
+          }
+        } 
+      }
+      user{
+        id
+        username
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+}
+    ''';
+  }
+
   String calculate(int userId, int quizId) {
     return '''
 mutation {
