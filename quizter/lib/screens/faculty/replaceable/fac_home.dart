@@ -90,7 +90,6 @@ class _FacHomeState extends State<FacHome> {
           quizset = [-1];
         });
       }
-
       setState(() {
         show = true;
       });
@@ -143,98 +142,156 @@ class _FacHomeState extends State<FacHome> {
       return Column(
         children: [
           Expanded(
-              child: Container(
-            color: kFrost,
-            child: Column(
+              child: Padding(
+            padding: const EdgeInsets.fromLTRB(32, 24, 32, 24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 40),
-                        child: Text('Profile ',
-                            style: Theme.of(context).textTheme.headline5),
-                      ),
+                Expanded(
+                  child: Card(
+                    color: kGlacier,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.account_box,
+                          size: 200,
+                        ),
+                        !show
+                            ? Text('Faculty',
+                                style: Theme.of(context).textTheme.headline6)
+                            : Text('$un',
+                                style: Theme.of(context).textTheme.headline6),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-                Divider(
-                  color: kIgris,
-                  thickness: 3,
-                ),
-                if (!show)
-                  Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: kIgris,
+                Expanded(
+                  flex: 3,
+                  child: Card(
+                    color: kIgris,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (!show)
+                            Expanded(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: kFrost,
+                                ),
+                              ),
+                            ),
+                          !show
+                              ? Container()
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text('Name',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text('$fn $ln',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                  ],
+                                ),
+                          !show
+                              ? Container()
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text('Email',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text('$email',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                  ],
+                                ),
+                          if (!show)
+                            Container()
+                          else
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text('Department',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .copyWith(color: kGlacier)),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text('CSE',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .copyWith(color: kGlacier)),
+                                ),
+                              ],
+                            ),
+                          !show
+                              ? Container()
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text('Quizzes Created',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text('$qz',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(color: kGlacier)),
+                                    ),
+                                  ],
+                                ),
+                        ],
                       ),
                     ),
                   ),
-                !show
-                    ? Container()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 40),
-                              child: Text('Username:  ${un}',
-                                  style: Theme.of(context).textTheme.headline6),
-                            ),
-                          ),
-                        ],
-                      ),
-                !show
-                    ? Container()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 40),
-                              child: Text('Name:  ${fn} ${ln}',
-                                  style: Theme.of(context).textTheme.headline6),
-                            ),
-                          ),
-                        ],
-                      ),
-                !show
-                    ? Container()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 40),
-                              child: Text('Email:  ${email}',
-                                  style: Theme.of(context).textTheme.headline6),
-                            ),
-                          ),
-                        ],
-                      ),
-                !show
-                    ? Container()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 40),
-                              child: Text('Department:  CSE',
-                                  style: Theme.of(context).textTheme.headline6),
-                            ),
-                          ),
-                        ],
-                      ),
-                !show
-                    ? Container()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 40),
-                              child: Text('Quizzes Created:  ${qz}',
-                                  style: Theme.of(context).textTheme.headline6),
-                            ),
-                          ),
-                        ],
-                      ),
+                ),
+                Expanded(
+                  child: Card(
+                    elevation: 0,
+                    color: kFrost,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.account_box,
+                          size: 200,
+                          color: kFrost,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           )),
