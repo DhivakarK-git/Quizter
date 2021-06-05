@@ -179,7 +179,7 @@ class _FacHomeState extends State<FacHome> {
                             Expanded(
                               child: Center(
                                 child: CircularProgressIndicator(
-                                  color: kFrost,
+                                  backgroundColor: kFrost,
                                 ),
                               ),
                             ),
