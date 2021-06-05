@@ -30,11 +30,6 @@ class _FacHomeState extends State<FacHome> {
 
   void getQuizes() async {
     final QueryResult quiz = await _quiz.queryA(gq.getFprofile());
-    un = quiz.data['me']['usert']['user']['username'].toString();
-    fn = quiz.data['me']['usert']['user']['firstName'].toString();
-    ln = quiz.data['me']['usert']['user']['lastName'].toString();
-    email = quiz.data['me']['usert']['user']['email'].toString();
-    qz = quiz.data['me']['usert']['makesSet'][0]['quizzes'].length;
     final snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 5),
@@ -46,30 +41,59 @@ class _FacHomeState extends State<FacHome> {
         ));
     if (quiz.hasException) {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+        quizset = [-1];
+      });
     } else {
+      un = quiz.data['me']['usert']['user']['username'].toString();
+      fn = quiz.data['me']['usert']['user']['firstName'].toString();
+      ln = quiz.data['me']['usert']['user']['lastName'].toString();
+      email = quiz.data['me']['usert']['user']['email'].toString();
+      qz = quiz.data['me']['usert']['makesSet'][0]['quizzes'].length;
       try {
-        setState(() {
-          int userId = int.parse(quiz.data['me']['usert']['id']);
-          var quizs = quiz.data['me']['usert']['makesSet'][0]['quizzes'];
-          for (int i = 0; i < quizs.length; i++) {
-            var takers = quizs[i]['makers'];
-            var user = [];
-            for (int j = 0; j < takers.length; j++) {
-              user.add(int.parse(takers[j]['user']['id']));
-            }
-            DateTime sd = DateTime.parse(
-                quizs[i]['startTime'].toString().substring(0, 10));
-            DateTime nd =
-                DateTime.parse(DateTime.now().toString().substring(0, 10));
-            if (user.contains(userId) && sd == nd) {
-              quizset.add(quizs[i]);
-            }
+        int userId = int.parse(quiz.data['me']['usert']['id']);
+        var quizs = quiz.data['me']['usert']['makesSet'][0]['quizzes'];
+        for (int i = 0; i < quizs.length; i++) {
+          var takers = quizs[i]['makers'];
+          var user = [];
+          for (int j = 0; j < takers.length; j++) {
+            user.add(int.parse(takers[j]['user']['id']));
           }
-          show = true;
-        });
+          DateTime sd =
+              DateTime.parse(quizs[i]['startTime'].toString().substring(0, 10));
+          DateTime nd =
+              DateTime.parse(DateTime.now().toString().substring(0, 10));
+          if (user.contains(userId) && sd == nd) {
+            quizset.add(quizs[i]);
+          }
+        }
+        if (quizset.isEmpty) {
+          setState(() {
+            quizset = [-1];
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 5),
+              elevation: 2,
+              backgroundColor: kMatte,
+              content: Text(
+                'No quizzes are available for you today.',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2
+                    .copyWith(color: kFrost),
+              )));
+        }
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        setState(() {
+          quizset = [-1];
+        });
       }
+
+      setState(() {
+        show = true;
+      });
     }
   }
 
@@ -268,7 +292,6 @@ class _FacHomeState extends State<FacHome> {
                               padding: const EdgeInsets.only(bottom: 32),
                               child: quizset.isEmpty
                                   ? ListView.builder(
-                                      //TODO: fix card overflow
                                       padding: EdgeInsets.symmetric(
                                           vertical: 8.0, horizontal: 32.0),
                                       itemCount: 6,
@@ -350,33 +373,35 @@ class _FacHomeState extends State<FacHome> {
                                           ),
                                         );
                                       })
-                                  : ListView.builder(
-                                      //TODO: fix card overflow
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 32.0),
-                                      itemCount: quizset.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return TextButton(
-                                          onPressed: () {
-                                            quizid =
-                                                int.parse(quizset[index]['id']);
-                                            quizname =
-                                                quizset[index]['quizName'];
-                                            accesscode =
-                                                quizset[index]['accessCode'];
-                                            showquiz = true;
-                                            setState(() {});
-                                          },
-                                          style: TextButton.styleFrom(
-                                              shadowColor: kMatte),
-                                          child: kIsWeb
-                                              ? cardQuiz(index, context)
-                                                  .moveUpOnHover
-                                              : cardQuiz(index, context),
-                                        );
-                                      }),
+                                  : quizset[0] == -1
+                                      ? Container()
+                                      : ListView.builder(
+                                          //TODO: fix card overflow
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0, horizontal: 32.0),
+                                          itemCount: quizset.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return TextButton(
+                                              onPressed: () {
+                                                quizid = int.parse(
+                                                    quizset[index]['id']);
+                                                quizname =
+                                                    quizset[index]['quizName'];
+                                                accesscode = quizset[index]
+                                                    ['accessCode'];
+                                                showquiz = true;
+                                                setState(() {});
+                                              },
+                                              style: TextButton.styleFrom(
+                                                  shadowColor: kMatte),
+                                              child: kIsWeb
+                                                  ? cardQuiz(index, context)
+                                                      .moveUpOnHover
+                                                  : cardQuiz(index, context),
+                                            );
+                                          }),
                             )),
                       ),
                     ],

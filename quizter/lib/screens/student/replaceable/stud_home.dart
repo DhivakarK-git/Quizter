@@ -28,29 +28,7 @@ class _StudHomeState extends State<StudHome> {
   var un, fn, ln, cls, email, qs, yr, dept = "CSE";
   void getQuizes() async {
     final QueryResult quiz = await _quiz.queryA(gq.getSprofile());
-    un = quiz.data['me']['usert']['user']['username'].toString();
-    fn = quiz.data['me']['usert']['user']['firstName'].toString();
-    ln = quiz.data['me']['usert']['user']['lastName'].toString();
-    email = quiz.data['me']['usert']['user']['email'].toString();
-    cls = quiz.data['me']['usert']['belongsSet'][0]['clas']['className'];
-    qs = quiz.data['me']['usert']['takesSet'][0]['quizzes'].length;
 
-    try {
-      switch (int.parse(cls[0])) {
-        case 1:
-          yr = "First Year";
-          break;
-        case 2:
-          yr = "Second Year";
-          break;
-        case 3:
-          yr = "Third Year";
-          break;
-        case 4:
-          yr = "Fourth Year";
-          break;
-      }
-    } catch (e) {}
     final snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 5),
@@ -65,6 +43,31 @@ class _StudHomeState extends State<StudHome> {
       quizset = [-1];
       setState(() {});
     } else {
+      un = quiz.data['me']['usert']['user']['username'].toString();
+      fn = quiz.data['me']['usert']['user']['firstName'].toString();
+      ln = quiz.data['me']['usert']['user']['lastName'].toString();
+      email = quiz.data['me']['usert']['user']['email'].toString();
+      cls = quiz.data['me']['usert']['belongsSet'][0]['clas']['className'];
+      qs = quiz.data['me']['usert']['takesSet'][0]['quizzes'].length;
+
+      try {
+        switch (int.parse(cls[0])) {
+          case 1:
+            yr = "First Year";
+            break;
+          case 2:
+            yr = "Second Year";
+            break;
+          case 3:
+            yr = "Third Year";
+            break;
+          case 4:
+            yr = "Fourth Year";
+            break;
+        }
+      } catch (e) {
+        quizset.add(-1);
+      }
       try {
         userId = int.parse(quiz.data['me']['usert']['id']);
         var quizs = quiz.data['me']['usert']['takesSet'][0]['quizzes'];
@@ -92,7 +95,18 @@ class _StudHomeState extends State<StudHome> {
           }
         }
         if (quizset.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 5),
+              elevation: 2,
+              backgroundColor: kMatte,
+              content: Text(
+                'No quizzes are available for you today.',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2
+                    .copyWith(color: kFrost),
+              )));
           quizset.add(-1);
         }
       } catch (exception1) {
@@ -481,7 +495,6 @@ class _StudHomeState extends State<StudHome> {
                                 : quizset[0] == -1
                                     ? Container()
                                     : ListView.builder(
-                                        //TODO: fix card overflow
                                         padding: EdgeInsets.symmetric(
                                             vertical: 8.0, horizontal: 32.0),
                                         itemCount: quizset.length,

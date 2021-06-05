@@ -20,6 +20,6 @@ from graphene_django.views import GraphQLView
 import quizApp.schema
 
 urlpatterns = [
-    path('', admin.site.urls),
-    url(r'^graphql$', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path('admin/', admin.site.urls),
+    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]
