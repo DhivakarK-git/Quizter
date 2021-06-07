@@ -165,6 +165,37 @@ me{
 ''';
   }
 
+  String getROptions({int quizId, int quesId}) {
+    return '''
+{
+  me{
+    usert{
+      makesSet{
+        quiz(id:$quizId){
+          question(id:$quesId){
+            id
+            options{
+              id
+              answer{
+              id
+              answerText
+            }
+              question {
+                id
+              }
+              user {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+''';
+  }
+
   String getOptions({int quizId, int quesId}) {
     return '''
 {
@@ -186,6 +217,38 @@ me{
               user {
                 id
               }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+''';
+  }
+
+  String getRQuiz(int quizid) {
+    return '''
+{
+  me {
+    usert {
+      makesSet {
+        quiz(id: $quizid) {
+          quizName
+          accessCode
+          linear
+          shuffle
+          duration
+          endTime
+          questions {
+            id
+            questionText
+            questionType
+            questionMark
+            answers {
+              id
+              answerText
+              correct
             }
           }
         }
@@ -431,8 +494,7 @@ me{
 ''';
   }
 
-  String getSprofile()
-  {
+  String getSprofile() {
     return '''
 {
   me {
@@ -477,8 +539,7 @@ me{
     ''';
   }
 
-  String getFprofile()
-  {
+  String getFprofile() {
     return '''
    {
   me {
