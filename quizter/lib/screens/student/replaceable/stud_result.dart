@@ -663,13 +663,17 @@ class _StudResultState extends State<StudResult> {
                                                   flex: 4,
                                                   child: (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
                                                               find(i, j) ==
-                                                                  classlist[4][i]['user']['takesSet'][0]['quizzes'][j][
+                                                                  classlist[4][i]['user']['takesSet'][0]
+                                                                          ['quizzes'][j]
+                                                                      [
                                                                       'timesCanTake']) &&
-                                                          DateTime.parse(changedate(classlist[4][i]['user']
-                                                                          ['takesSet'][0]
-                                                                      ['quizzes'][j]
-                                                                  ['publishTime']))
-                                                              .isBefore(DateTime.now())
+                                                          (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] !=
+                                                                  "" &&
+                                                              classlist[4][i]['user']['takesSet']
+                                                                          [0]['quizzes'][j]
+                                                                      ['publishTime'] !=
+                                                                  null &&
+                                                              DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'])).isBefore(DateTime.now()))
                                                       ? TextButton(
                                                           onPressed: () async {
                                                             result = classlist[4]
@@ -688,7 +692,7 @@ class _StudResultState extends State<StudResult> {
                                                                       kMatte,
                                                                   alignment:
                                                                       Alignment
-                                                                          .centerLeft),
+                                                                          .topLeft),
                                                           child: Text(
                                                             "Yes",
                                                             style: Theme.of(
@@ -696,8 +700,8 @@ class _StudResultState extends State<StudResult> {
                                                                 .textTheme
                                                                 .bodyText1
                                                                 .copyWith(
-                                                                    color:
-                                                                        kFrost),
+                                                                  color: kFrost,
+                                                                ),
                                                           ),
                                                         )
                                                       : Text(

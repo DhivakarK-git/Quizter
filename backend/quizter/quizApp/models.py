@@ -97,7 +97,7 @@ class Quiz(models.Model):
 	access_code = models.CharField(max_length=50, default='quizter')
 	start_time = models.DateTimeField(null=True)
 	end_time = models.DateTimeField(null=True)
-	publish_time = models.DateTimeField(null=True)
+	publish_time = models.DateTimeField(null=True,blank=True)
 	duration = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(240)],null=True)
 	times_can_take = models.IntegerField(default=1,null=True)
 	linear=models.BooleanField(default=True)
