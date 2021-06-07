@@ -663,13 +663,17 @@ class _StudResultState extends State<StudResult> {
                                                   flex: 4,
                                                   child: (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
                                                               find(i, j) ==
-                                                                  classlist[4][i]['user']['takesSet'][0]['quizzes'][j][
+                                                                  classlist[4][i]['user']['takesSet'][0]
+                                                                          ['quizzes'][j][
                                                                       'timesCanTake']) &&
-                                                          DateTime.parse(changedate(classlist[4][i]['user']
-                                                                          ['takesSet'][0]
-                                                                      ['quizzes'][j]
-                                                                  ['publishTime']))
-                                                              .isBefore(DateTime.now())
+                                                          (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'])).isBefore(DateTime.now()) ||
+                                                              classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] !=
+                                                                  "" ||
+                                                              classlist[4][i]['user']
+                                                                              ['takesSet'][0]
+                                                                          ['quizzes'][j]
+                                                                      ['publishTime'] !=
+                                                                  null)
                                                       ? TextButton(
                                                           onPressed: () async {
                                                             result = classlist[4]
