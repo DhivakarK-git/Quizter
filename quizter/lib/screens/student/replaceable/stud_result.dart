@@ -160,7 +160,6 @@ class _StudResultState extends State<StudResult> {
             pickedset.add(answer);
           }
         }
-        print(pickedset);
       } else
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
