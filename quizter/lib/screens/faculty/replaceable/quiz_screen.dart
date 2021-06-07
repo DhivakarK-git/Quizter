@@ -349,13 +349,23 @@ class _QuizScreenState extends State<QuizScreen> {
                   Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
             )));
       }
-    } else if (starttime == null || endtime == null || publishtime == null) {
+    } else if (starttime == null || endtime == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(seconds: 5),
           elevation: 4,
           backgroundColor: kMatte,
           content: Text(
             'Please do set date and time for start, end and publish time.',
+            style:
+                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
+          )));
+    } else if (publishtime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 5),
+          elevation: 4,
+          backgroundColor: kMatte,
+          content: Text(
+            'Since Publish Time was not set, the quiz scores and feedback will not be released to the students.',
             style:
                 Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
           )));
