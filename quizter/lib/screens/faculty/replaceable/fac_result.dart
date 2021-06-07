@@ -738,10 +738,13 @@ class _FacResultState extends State<FacResult> {
                                                         showresult = true;
                                                         setState(() {});
                                                       },
-                                                      style: TextButton.styleFrom(
-                                                          shadowColor: kMatte,
-                                                          alignment: Alignment
-                                                              .centerLeft),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              shadowColor:
+                                                                  kMatte,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft),
                                                       child: Text(
                                                         "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
                                                         style: Theme.of(context)
