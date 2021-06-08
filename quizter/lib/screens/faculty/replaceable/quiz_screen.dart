@@ -38,7 +38,10 @@ class _QuizScreenState extends State<QuizScreen> {
       courses = ['------'],
       classes = [],
       teaches = [],
-      colors = [];
+      colors = [],
+      students = [],
+      studentsCopy = [],
+      assignedto = [];
   DateTime starttime, endtime, publishtime;
   bool proceed = false,
       publish = false,
@@ -60,8 +63,7 @@ class _QuizScreenState extends State<QuizScreen> {
       question = "",
       ans = "",
       dropdownValue = 'Single Correct Answer',
-      course = '',
-      clas = '';
+      course = '';
   static const _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
@@ -208,8 +210,15 @@ class _QuizScreenState extends State<QuizScreen> {
     final QueryResult quiz = await _quiz.queryA(gq.getteaches());
     var temp = quiz.data['me']['usert']['teachesSet'];
     for (int i = 0; i < temp.length; i++) {
-      teaches
-          .add([temp[i]['course']['courseId'], temp[i]['clas']['className']]);
+      var bt = [];
+      for (int j = 0; j < temp[i]['clas']['belongsSet'].length; j++) {
+        bt.add([
+          temp[i]['clas']['belongsSet'][j]['user']['user']['username'],
+          temp[i]['clas']['belongsSet'][j]['user']['id']
+        ]);
+      }
+      teaches.add(
+          [temp[i]['course']['courseId'], temp[i]['clas']['className'], bt]);
       if (!courses.contains(temp[i]['course']['courseId']))
         courses.add(temp[i]['course']['courseId']);
       course = '------';
@@ -317,7 +326,8 @@ class _QuizScreenState extends State<QuizScreen> {
         final QueryResult cla = await _quiz.queryA(gq.classList());
         temp = cla.data['me']['usert']['teachesSet'];
         for (int i = 0; i < temp.length; i++) {
-          if (temp[i]['clas']['className'] == clas) {
+          //TODO:logic to correctly submit
+          if (assignedto.contains(temp[i]['clas']['className'])) {
             var tem = temp[i]['clas']['belongsSet'];
             for (int j = 0; j < tem.length; j++) {
               final QueryResult publish = await _quiz.queryA(gq.setTakes(
@@ -1057,68 +1067,236 @@ class _QuizScreenState extends State<QuizScreen> {
                     ],
                   ),
                 ),
+                if (classes.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Card(
+                        elevation: 2,
+                        color: kGlacier,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Assigned To:',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                  Wrap(
+                                    children: [
+                                      for (int k = 0;
+                                          k < assignedto.length;
+                                          k++)
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: InputChip(
+                                            padding: EdgeInsets.all(2.0),
+                                            label: Text('${assignedto[k]}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .button),
+                                            selected: false,
+                                            onDeleted: () {
+                                              if (assignedto[k]
+                                                      .toString()
+                                                      .length <
+                                                  10)
+                                                setState(() {
+                                                  classes.add(
+                                                      assignedto[k].toString());
+                                                  students =
+                                                      studentsCopy.toList();
+                                                  assignedto.removeAt(k);
+                                                  for (int l = 0;
+                                                      l < assignedto.length;
+                                                      l++) {
+                                                    int m = 0;
+                                                    while (
+                                                        m < students.length) {
+                                                      if (students[m][1] ==
+                                                          assignedto[l])
+                                                        students.removeAt(m);
+                                                      else if (students[m][0] ==
+                                                          assignedto[l])
+                                                        students.removeAt(m);
+                                                      else
+                                                        m++;
+                                                    }
+                                                  }
+                                                });
+                                              else
+                                                setState(() {
+                                                  students =
+                                                      studentsCopy.toList();
+                                                  assignedto.removeAt(k);
+                                                  for (int l = 0;
+                                                      l < assignedto.length;
+                                                      l++) {
+                                                    int m = 0;
+                                                    while (
+                                                        m < students.length) {
+                                                      if (students[m][1] ==
+                                                          assignedto[l])
+                                                        students.removeAt(m);
+                                                      else if (students[m][0] ==
+                                                          assignedto[l])
+                                                        students.removeAt(m);
+                                                      else
+                                                        m++;
+                                                    }
+                                                  }
+                                                });
+                                              students.sort((a, b) =>
+                                                  a[0].compareTo(b[0]));
+                                              classes.sort();
+                                            },
+                                          ),
+                                        )
+                                    ],
+                                  ),
+                                  if (classes.length > 1 || students.length > 0)
+                                    Tooltip(
+                                      message:
+                                          "You can add classes or individual students",
+                                      child: DropdownButton<String>(
+                                        value: classes[0],
+                                        onChanged: (String newValue) {
+                                          if (classes.contains(newValue) &&
+                                              newValue != '------') {
+                                            classes.remove(newValue);
+                                          }
+                                          int k = 0;
+                                          while (k < students.length) {
+                                            if (students[k][1] == newValue)
+                                              students.removeAt(k);
+                                            else if (students[k][0] == newValue)
+                                              students.removeAt(k);
+                                            else {
+                                              k++;
+                                            }
+                                          }
+                                          setState(() {
+                                            if (newValue != '------')
+                                              assignedto.add(newValue);
+                                          });
+                                          print(students);
+                                        },
+                                        items: classes
+                                                .map<DropdownMenuItem<String>>(
+                                                    (value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .button,
+                                                ),
+                                              );
+                                            }).toList() +
+                                            students
+                                                .map<DropdownMenuItem<String>>(
+                                                    (value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value[0],
+                                                child: Text(
+                                                  value[0],
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .button,
+                                                ),
+                                              );
+                                            }).toList(),
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Wrap(
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Course:',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                      ),
-                                      DropdownButton<String>(
-                                        value: course,
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            course = newValue;
-                                            classes = [];
-                                            for (int i = 0;
-                                                i < teaches.length;
-                                                i++) {
-                                              if (teaches[i][0] == course) {
-                                                classes.add(teaches[i][1]);
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Course:',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                    DropdownButton<String>(
+                                      value: course,
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          course = newValue;
+                                          classes = ['------'];
+                                          students = [];
+                                          assignedto = [];
+                                          for (int i = 0;
+                                              i < teaches.length;
+                                              i++) {
+                                            if (teaches[i][0] == course) {
+                                              classes.add(teaches[i][1]);
+                                              for (int j = 0;
+                                                  j < teaches[i][2].length;
+                                                  j++) {
+                                                students.add([
+                                                  teaches[i][2][j][0],
+                                                  classes.last
+                                                ]);
                                               }
                                             }
-                                            clas = classes[0];
-                                          });
-                                        },
-                                        items: courses
-                                            .map<DropdownMenuItem<String>>(
-                                                (value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(
-                                              value,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .button,
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                          }
+                                          students.sort(
+                                              (a, b) => a[0].compareTo(b[0]));
+                                          studentsCopy = students.toList();
+                                          classes.sort();
+                                        });
+                                      },
+                                      items: courses
+                                          .map<DropdownMenuItem<String>>(
+                                              (value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .button,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1213,85 +1391,80 @@ class _QuizScreenState extends State<QuizScreen> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width / 3.75,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        flex: 4,
-                                        child: Text(
-                                          'No. of Submissions Allowed:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        'No. of Submissions Allowed:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        child: TextFormField(
-                                          cursorColor: kMatte,
-                                          maxLines: null,
-                                          keyboardType: TextInputType.multiline,
-                                          style: Theme.of(context)
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        cursorColor: kMatte,
+                                        maxLines: null,
+                                        keyboardType: TextInputType.multiline,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                        decoration: InputDecoration(
+                                          fillColor: kFrost,
+                                          focusColor: kFrost,
+                                          hintText: '$noofs',
+                                          errorStyle: Theme.of(context)
                                               .textTheme
-                                              .bodyText1,
-                                          decoration: InputDecoration(
-                                            fillColor: kFrost,
-                                            focusColor: kFrost,
-                                            hintText: '$noofs',
-                                            errorStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2
-                                                .copyWith(color: kRed),
-                                            hintStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(
-                                                    color:
-                                                        kMatte.withAlpha(189)),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: kMatte),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: kQuiz),
-                                            ),
+                                              .bodyText2
+                                              .copyWith(color: kRed),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                  color: kMatte.withAlpha(189)),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: kMatte),
                                           ),
-                                          validator: (value) {
-                                            try {
-                                              int x = int.parse(value);
-                                              if (x < 1 || noofs < 1) {
-                                                return "+ve value";
-                                              } else
-                                                return null;
-                                            } catch (e) {
-                                              if (noofs < 1)
-                                                return "+ve value";
-                                              else
-                                                return null;
-                                            }
-                                          },
-                                          onChanged: (value) {
-                                            noofs = int.parse(value);
-                                          },
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: kQuiz),
+                                          ),
                                         ),
+                                        validator: (value) {
+                                          try {
+                                            int x = int.parse(value);
+                                            if (x < 1 || noofs < 1) {
+                                              return "+ve value";
+                                            } else
+                                              return null;
+                                          } catch (e) {
+                                            if (noofs < 1)
+                                              return "+ve value";
+                                            else
+                                              return null;
+                                          }
+                                        },
+                                        onChanged: (value) {
+                                          noofs = int.parse(value);
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1299,58 +1472,6 @@ class _QuizScreenState extends State<QuizScreen> {
                     ],
                   ),
                 ),
-                if (classes.isNotEmpty)
-                  Container(
-                    width: MediaQuery.of(context).size.width / 3.75,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 32.0),
-                      child: Card(
-                        elevation: 2,
-                        color: kGlacier,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Class:',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                  DropdownButton<String>(
-                                    value: clas,
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        clas = newValue;
-                                      });
-                                    },
-                                    items: classes
-                                        .map<DropdownMenuItem<String>>((value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button,
-                                        ),
-                                      );
-                                    }).toList(),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Wrap(

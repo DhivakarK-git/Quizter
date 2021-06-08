@@ -157,6 +157,14 @@ me{
       }
       clas{
       className
+        belongsSet{
+          user{
+            id
+            user{
+              username
+            }
+          }
+        }
       }
     }
   }
