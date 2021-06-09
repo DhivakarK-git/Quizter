@@ -1133,84 +1133,101 @@ class _QuizScreenState extends State<QuizScreen> {
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
-                                  Tooltip(
-                                    message:
-                                        "Please ensure that if individual students are selected, if you wish to select all students in a class; dont have the class selected as well.",
-                                    child: Wrap(
-                                      children: [
-                                        for (int k = 0;
-                                            k < assignedto.length;
-                                            k++)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: InputChip(
-                                              padding: EdgeInsets.all(2.0),
-                                              label: Text('${assignedto[k]}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .button),
-                                              selected: false,
-                                              onDeleted: () {
-                                                if (assignedto[k]
-                                                        .toString()
-                                                        .length <
-                                                    10)
-                                                  setState(() {
-                                                    classes.add(assignedto[k]
-                                                        .toString());
-                                                    students =
-                                                        studentsCopy.toList();
-                                                    assignedto.removeAt(k);
-                                                    for (int l = 0;
-                                                        l < assignedto.length;
-                                                        l++) {
-                                                      int m = 0;
-                                                      while (
-                                                          m < students.length) {
-                                                        if (students[m][1] ==
-                                                            assignedto[l])
-                                                          students.removeAt(m);
-                                                        else if (students[m]
-                                                                [0] ==
-                                                            assignedto[l])
-                                                          students.removeAt(m);
-                                                        else
-                                                          m++;
-                                                      }
-                                                    }
-                                                  });
-                                                else
-                                                  setState(() {
-                                                    students =
-                                                        studentsCopy.toList();
-                                                    assignedto.removeAt(k);
-                                                    for (int l = 0;
-                                                        l < assignedto.length;
-                                                        l++) {
-                                                      int m = 0;
-                                                      while (
-                                                          m < students.length) {
-                                                        if (students[m][1] ==
-                                                            assignedto[l])
-                                                          students.removeAt(m);
-                                                        else if (students[m]
-                                                                [0] ==
-                                                            assignedto[l])
-                                                          students.removeAt(m);
-                                                        else
-                                                          m++;
-                                                      }
-                                                    }
-                                                  });
-                                                students.sort((a, b) =>
-                                                    a[0].compareTo(b[0]));
-                                                classes.sort();
-                                              },
-                                            ),
-                                          )
-                                      ],
-                                    ),
+                                  Column(
+                                    children: [
+                                      Tooltip(
+                                        message:
+                                            "Please ensure that if individual students are selected, if you wish to select all students in a class; dont have the class selected as well.",
+                                        child: Wrap(
+                                          children: [
+                                            for (int k = 0;
+                                                k < assignedto.length;
+                                                k++)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: InputChip(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  label: Text(
+                                                      '${assignedto[k]}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .button),
+                                                  selected: false,
+                                                  onDeleted: () {
+                                                    if (assignedto[k]
+                                                            .toString()
+                                                            .length <
+                                                        10)
+                                                      setState(() {
+                                                        classes.add(
+                                                            assignedto[k]
+                                                                .toString());
+                                                        students = studentsCopy
+                                                            .toList();
+                                                        assignedto.removeAt(k);
+                                                        for (int l = 0;
+                                                            l <
+                                                                assignedto
+                                                                    .length;
+                                                            l++) {
+                                                          int m = 0;
+                                                          while (m <
+                                                              students.length) {
+                                                            if (students[m]
+                                                                    [1] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else if (students[m]
+                                                                    [0] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else
+                                                              m++;
+                                                          }
+                                                        }
+                                                      });
+                                                    else
+                                                      setState(() {
+                                                        students = studentsCopy
+                                                            .toList();
+                                                        assignedto.removeAt(k);
+                                                        for (int l = 0;
+                                                            l <
+                                                                assignedto
+                                                                    .length;
+                                                            l++) {
+                                                          int m = 0;
+                                                          while (m <
+                                                              students.length) {
+                                                            if (students[m]
+                                                                    [1] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else if (students[m]
+                                                                    [0] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else
+                                                              m++;
+                                                          }
+                                                        }
+                                                      });
+                                                    students.sort((a, b) =>
+                                                        a[0].compareTo(b[0]));
+                                                    classes.sort();
+                                                  },
+                                                ),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   if (classes.length > 1 && students.length > 0)
                                     Tooltip(
