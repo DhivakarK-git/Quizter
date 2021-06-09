@@ -298,6 +298,17 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> publishQuiz() async {
+    if (publishtime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 5),
+          elevation: 4,
+          backgroundColor: kMatte,
+          content: Text(
+            'Since Publish Time was not set, the quiz scores and feedback will not be released to the students.',
+            style:
+                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
+          )));
+    }
     if (_formPublish.currentState.validate() &&
         starttime != null &&
         endtime != null &&
@@ -324,10 +335,10 @@ class _QuizScreenState extends State<QuizScreen> {
         final QueryResult takes =
             await _quiz.queryA(gq.takersList(widget.quizId));
         var temp = takes.data['me']['usert']['makesSet'][0]['quiz']['takers'];
-        // for (int i = 0; i < temp.length; i++) {
-        //   final QueryResult publish = await _quiz.queryA(gq.removeTakes(
-        //       userId: int.parse(temp[i]['user']['id']), quizId: widget.quizId));
-        // }
+        for (int i = 0; i < temp.length; i++) {
+          final QueryResult publish = await _quiz.queryA(gq.removeTakes(
+              userId: int.parse(temp[i]['user']['id']), quizId: widget.quizId));
+        }
         final QueryResult cla = await _quiz.queryA(gq.classList());
         temp = cla.data['me']['usert']['teachesSet'];
         for (int i = 0; i < temp.length; i++) {
@@ -391,21 +402,10 @@ class _QuizScreenState extends State<QuizScreen> {
             style:
                 Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
           )));
-    } else if (publishtime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 5),
-          elevation: 4,
-          backgroundColor: kMatte,
-          content: Text(
-            'Since Publish Time was not set, the quiz scores and feedback will not be released to the students.',
-            style:
-                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
-          )));
     }
   }
 
   Widget swaper() {
-    String access = '';
     if (!proceed && !publish) {
       return Container(
         key: ValueKey<int>(-1),
@@ -553,8 +553,7 @@ class _QuizScreenState extends State<QuizScreen> {
     } else if (publish) {
       return Container(
         key: ValueKey<int>(-1),
-        margin: EdgeInsets.fromLTRB(56.0, 24.0, 56.0, 32.0),
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.fromLTRB(56.0, 24.0, 56.0, 32.0),
         child: SingleChildScrollView(
           child: Form(
             key: _formPublish,
@@ -585,45 +584,42 @@ class _QuizScreenState extends State<QuizScreen> {
                       Container(
                         width: MediaQuery.of(context).size.width /
                             (MediaQuery.of(context).size.width > 1268
-                                ? 3.9
+                                ? 3.73
                                 : 2),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Access Code:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        'Access Code:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          '${widget.accesscode}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        '${widget.accesscode}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -631,45 +627,42 @@ class _QuizScreenState extends State<QuizScreen> {
                       Container(
                         width: MediaQuery.of(context).size.width /
                             (MediaQuery.of(context).size.width > 1268
-                                ? 3.9
+                                ? 3.73
                                 : 2),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Total Marks:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        'Total Marks:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          '${marks.fold(0, (previous, current) => previous + current)}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        '${marks.fold(0, (previous, current) => previous + current)}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -682,426 +675,408 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: Wrap(
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Tooltip(
-                                                message: "Click to clear time",
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      starttime = null;
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    'Start Time:',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                '${starttime == null ? 'Enter Time' : parseTime(starttime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  starttime = starttime == null
-                                                      ? DateTime.now()
-                                                      : starttime;
-                                                  TimeOfDay inter =
-                                                      await _selectTime(
-                                                          context,
-                                                          TimeOfDay
-                                                              .fromDateTime(
-                                                                  starttime));
-                                                  starttime = DateTime(
-                                                    starttime.year,
-                                                    starttime.month,
-                                                    starttime.day,
-                                                    inter.hour,
-                                                    inter.minute,
-                                                  );
-                                                  setState(() {});
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Tooltip(
+                                              message: "Click to clear time",
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    starttime = null;
+                                                  });
                                                 },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.schedule,
-                                                  ),
+                                                child: Text(
+                                                  'Start Time:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${starttime == null ? 'Enter Time' : parseTime(starttime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
                                             ),
-                                            Expanded(
-                                              child: Text(
-                                                '${starttime == null ? 'Enter Date' : parseDate(starttime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  starttime = starttime == null
-                                                      ? DateTime.now()
-                                                      : starttime;
-                                                  DateTime inter =
-                                                      await _selectDate(
-                                                          context, starttime);
-                                                  starttime = DateTime(
-                                                    inter.year,
-                                                    inter.month,
-                                                    inter.day,
-                                                    starttime.hour,
-                                                    starttime.minute,
-                                                  );
-                                                  setState(() {});
-                                                },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.calendar_today,
-                                                  ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                starttime = starttime == null
+                                                    ? DateTime.now()
+                                                    : starttime;
+                                                TimeOfDay inter =
+                                                    await _selectTime(
+                                                        context,
+                                                        TimeOfDay.fromDateTime(
+                                                            starttime));
+                                                starttime = DateTime(
+                                                  starttime.year,
+                                                  starttime.month,
+                                                  starttime.day,
+                                                  inter.hour,
+                                                  inter.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.schedule,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${starttime == null ? 'Enter Date' : parseDate(starttime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                starttime = starttime == null
+                                                    ? DateTime.now()
+                                                    : starttime;
+                                                DateTime inter =
+                                                    await _selectDate(
+                                                        context, starttime);
+                                                starttime = DateTime(
+                                                  inter.year,
+                                                  inter.month,
+                                                  inter.day,
+                                                  starttime.hour,
+                                                  starttime.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.calendar_today,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Tooltip(
-                                                message: "Click to clear time",
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      endtime = null;
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    'End Time:',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                '${endtime == null ? 'Enter Time' : parseTime(endtime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  endtime = endtime == null
-                                                      ? DateTime.now()
-                                                      : endtime;
-                                                  TimeOfDay inter =
-                                                      await _selectTime(
-                                                          context,
-                                                          TimeOfDay
-                                                              .fromDateTime(
-                                                                  endtime));
-                                                  endtime = DateTime(
-                                                    endtime.year,
-                                                    endtime.month,
-                                                    endtime.day,
-                                                    inter.hour,
-                                                    inter.minute,
-                                                  );
-                                                  setState(() {});
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Tooltip(
+                                              message: "Click to clear time",
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    endtime = null;
+                                                  });
                                                 },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.schedule,
-                                                  ),
+                                                child: Text(
+                                                  'End Time:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${endtime == null ? 'Enter Time' : parseTime(endtime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
                                             ),
-                                            Expanded(
-                                              child: Text(
-                                                '${endtime == null ? 'Enter Date' : parseDate(endtime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  endtime = endtime == null
-                                                      ? DateTime.now()
-                                                      : endtime;
-                                                  DateTime inter =
-                                                      await _selectDate(
-                                                          context, endtime);
-                                                  endtime = DateTime(
-                                                    inter.year,
-                                                    inter.month,
-                                                    inter.day,
-                                                    endtime.hour,
-                                                    endtime.minute,
-                                                  );
-                                                  setState(() {});
-                                                },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.calendar_today,
-                                                  ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                endtime = endtime == null
+                                                    ? DateTime.now()
+                                                    : endtime;
+                                                TimeOfDay inter =
+                                                    await _selectTime(
+                                                        context,
+                                                        TimeOfDay.fromDateTime(
+                                                            endtime));
+                                                endtime = DateTime(
+                                                  endtime.year,
+                                                  endtime.month,
+                                                  endtime.day,
+                                                  inter.hour,
+                                                  inter.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.schedule,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${endtime == null ? 'Enter Date' : parseDate(endtime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                endtime = endtime == null
+                                                    ? DateTime.now()
+                                                    : endtime;
+                                                DateTime inter =
+                                                    await _selectDate(
+                                                        context, endtime);
+                                                endtime = DateTime(
+                                                  inter.year,
+                                                  inter.month,
+                                                  inter.day,
+                                                  endtime.hour,
+                                                  endtime.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.calendar_today,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.75,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Tooltip(
-                                                message: "Click to clear time",
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      publishtime = null;
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    'Publish Time:',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                '${publishtime == null ? 'Enter Time' : parseTime(publishtime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  publishtime =
-                                                      publishtime == null
-                                                          ? DateTime.now()
-                                                          : publishtime;
-                                                  TimeOfDay inter =
-                                                      await _selectTime(
-                                                          context,
-                                                          TimeOfDay
-                                                              .fromDateTime(
-                                                                  publishtime));
-                                                  publishtime = DateTime(
-                                                    publishtime.year,
-                                                    publishtime.month,
-                                                    publishtime.day,
-                                                    inter.hour,
-                                                    inter.minute,
-                                                  );
-                                                  setState(() {});
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Tooltip(
+                                              message: "Click to clear time",
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    publishtime = null;
+                                                  });
                                                 },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.schedule,
-                                                  ),
+                                                child: Text(
+                                                  'Publish Time:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${publishtime == null ? 'Enter Time' : parseTime(publishtime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
                                             ),
-                                            Expanded(
-                                              child: Text(
-                                                '${publishtime == null ? 'Enter Date' : parseDate(publishtime.toString())}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  publishtime =
-                                                      publishtime == null
-                                                          ? DateTime.now()
-                                                          : publishtime;
-                                                  DateTime inter =
-                                                      await _selectDate(
-                                                          context, publishtime);
-                                                  publishtime = DateTime(
-                                                    inter.year,
-                                                    inter.month,
-                                                    inter.day,
-                                                    publishtime.hour,
-                                                    publishtime.minute,
-                                                  );
-                                                  setState(() {});
-                                                },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.calendar_today,
-                                                  ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                publishtime =
+                                                    publishtime == null
+                                                        ? DateTime.now()
+                                                        : publishtime;
+                                                TimeOfDay inter =
+                                                    await _selectTime(
+                                                        context,
+                                                        TimeOfDay.fromDateTime(
+                                                            publishtime));
+                                                publishtime = DateTime(
+                                                  publishtime.year,
+                                                  publishtime.month,
+                                                  publishtime.day,
+                                                  inter.hour,
+                                                  inter.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.schedule,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${publishtime == null ? 'Enter Date' : parseDate(publishtime.toString())}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                publishtime =
+                                                    publishtime == null
+                                                        ? DateTime.now()
+                                                        : publishtime;
+                                                DateTime inter =
+                                                    await _selectDate(
+                                                        context, publishtime);
+                                                publishtime = DateTime(
+                                                  inter.year,
+                                                  inter.month,
+                                                  inter.day,
+                                                  publishtime.hour,
+                                                  publishtime.minute,
+                                                );
+                                                setState(() {});
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.calendar_today,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1126,108 +1101,109 @@ class _QuizScreenState extends State<QuizScreen> {
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Assigned To:',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      top: (classes.length > 1 &&
+                                              students.length > 0)
+                                          ? 16
+                                          : 4,
+                                    ),
+                                    child: Text(
+                                      'Assigned To:',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
                                   ),
-                                  Column(
-                                    children: [
-                                      Tooltip(
-                                        message:
-                                            "Please ensure that if individual students are selected, if you wish to select all students in a class; dont have the class selected as well.",
-                                        child: Wrap(
-                                          children: [
-                                            for (int k = 0;
-                                                k < assignedto.length;
-                                                k++)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8.0),
-                                                child: InputChip(
-                                                  padding: EdgeInsets.all(2.0),
-                                                  label: Text(
-                                                      '${assignedto[k]}',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .button),
-                                                  selected: false,
-                                                  onDeleted: () {
-                                                    if (assignedto[k]
-                                                            .toString()
-                                                            .length <
-                                                        10)
-                                                      setState(() {
-                                                        classes.add(
-                                                            assignedto[k]
-                                                                .toString());
-                                                        students = studentsCopy
-                                                            .toList();
-                                                        assignedto.removeAt(k);
-                                                        for (int l = 0;
-                                                            l <
-                                                                assignedto
-                                                                    .length;
-                                                            l++) {
-                                                          int m = 0;
-                                                          while (m <
-                                                              students.length) {
-                                                            if (students[m]
-                                                                    [1] ==
-                                                                assignedto[l])
-                                                              students
-                                                                  .removeAt(m);
-                                                            else if (students[m]
-                                                                    [0] ==
-                                                                assignedto[l])
-                                                              students
-                                                                  .removeAt(m);
-                                                            else
-                                                              m++;
-                                                          }
-                                                        }
-                                                      });
-                                                    else
-                                                      setState(() {
-                                                        students = studentsCopy
-                                                            .toList();
-                                                        assignedto.removeAt(k);
-                                                        for (int l = 0;
-                                                            l <
-                                                                assignedto
-                                                                    .length;
-                                                            l++) {
-                                                          int m = 0;
-                                                          while (m <
-                                                              students.length) {
-                                                            if (students[m]
-                                                                    [1] ==
-                                                                assignedto[l])
-                                                              students
-                                                                  .removeAt(m);
-                                                            else if (students[m]
-                                                                    [0] ==
-                                                                assignedto[l])
-                                                              students
-                                                                  .removeAt(m);
-                                                            else
-                                                              m++;
-                                                          }
-                                                        }
-                                                      });
-                                                    students.sort((a, b) =>
-                                                        a[0].compareTo(b[0]));
-                                                    classes.sort();
-                                                  },
-                                                ),
-                                              )
-                                          ],
-                                        ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    padding: EdgeInsets.fromLTRB(
+                                        8,
+                                        classes.length > 1 &&
+                                                students.length > 0
+                                            ? 12
+                                            : 0,
+                                        8,
+                                        0),
+                                    child: Tooltip(
+                                      message:
+                                          "Please ensure that if individual students are selected, if you wish to select all students in a class; dont have the class selected as well.",
+                                      child: Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: [
+                                          for (int k = 0;
+                                              k < assignedto.length;
+                                              k++)
+                                            InputChip(
+                                              padding: EdgeInsets.all(2.0),
+                                              label: Text('${assignedto[k]}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .button),
+                                              selected: false,
+                                              onDeleted: () {
+                                                if (assignedto[k]
+                                                        .toString()
+                                                        .length <
+                                                    10)
+                                                  setState(() {
+                                                    classes.add(assignedto[k]
+                                                        .toString());
+                                                    students =
+                                                        studentsCopy.toList();
+                                                    assignedto.removeAt(k);
+                                                    for (int l = 0;
+                                                        l < assignedto.length;
+                                                        l++) {
+                                                      int m = 0;
+                                                      while (
+                                                          m < students.length) {
+                                                        if (students[m][1] ==
+                                                            assignedto[l])
+                                                          students.removeAt(m);
+                                                        else if (students[m]
+                                                                [0] ==
+                                                            assignedto[l])
+                                                          students.removeAt(m);
+                                                        else
+                                                          m++;
+                                                      }
+                                                    }
+                                                  });
+                                                else
+                                                  setState(() {
+                                                    students =
+                                                        studentsCopy.toList();
+                                                    assignedto.removeAt(k);
+                                                    for (int l = 0;
+                                                        l < assignedto.length;
+                                                        l++) {
+                                                      int m = 0;
+                                                      while (
+                                                          m < students.length) {
+                                                        if (students[m][1] ==
+                                                            assignedto[l])
+                                                          students.removeAt(m);
+                                                        else if (students[m]
+                                                                [0] ==
+                                                            assignedto[l])
+                                                          students.removeAt(m);
+                                                        else
+                                                          m++;
+                                                      }
+                                                    }
+                                                  });
+                                                students.sort((a, b) =>
+                                                    a[0].compareTo(b[0]));
+                                                classes.sort();
+                                              },
+                                            )
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
                                   if (classes.length > 1 && students.length > 0)
                                     Tooltip(
@@ -1294,9 +1270,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Wrap(
+                    alignment: WrapAlignment.spaceAround,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
+                        width: MediaQuery.of(context).size.width / 3.73,
                         child: Card(
                           elevation: 2,
                           color: kGlacier,
@@ -1366,95 +1343,90 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Duration:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Duration:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        child: TextFormField(
-                                          cursorColor: kMatte,
-                                          maxLines: null,
-                                          keyboardType: TextInputType.multiline,
-                                          style: Theme.of(context)
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        cursorColor: kMatte,
+                                        maxLines: null,
+                                        keyboardType: TextInputType.multiline,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                        decoration: InputDecoration(
+                                          fillColor: kFrost,
+                                          focusColor: kFrost,
+                                          hintText: '$duration',
+                                          suffixText: 'mins',
+                                          suffixStyle: Theme.of(context)
                                               .textTheme
                                               .bodyText1,
-                                          decoration: InputDecoration(
-                                            fillColor: kFrost,
-                                            focusColor: kFrost,
-                                            hintText: '$duration',
-                                            suffixText: 'mins',
-                                            suffixStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1,
-                                            errorStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2
-                                                .copyWith(color: kRed),
-                                            hintStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(
-                                                    color:
-                                                        kMatte.withAlpha(189)),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: kMatte),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: kQuiz),
-                                            ),
+                                          errorStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2
+                                              .copyWith(color: kRed),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                  color: kMatte.withAlpha(189)),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: kMatte),
                                           ),
-                                          validator: (value) {
-                                            try {
-                                              int x = int.parse(value);
-                                              if (x < 1 || duration < 1) {
-                                                return "+ve value";
-                                              } else
-                                                return null;
-                                            } catch (e) {
-                                              if (duration < 1)
-                                                return "+ve value";
-                                              else
-                                                return null;
-                                            }
-                                          },
-                                          onChanged: (value) {
-                                            duration = int.parse(value);
-                                          },
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: kQuiz),
+                                          ),
                                         ),
+                                        validator: (value) {
+                                          try {
+                                            int x = int.parse(value);
+                                            if (x < 1 || duration < 1) {
+                                              return "+ve value";
+                                            } else
+                                              return null;
+                                          } catch (e) {
+                                            if (duration < 1)
+                                              return "+ve value";
+                                            else
+                                              return null;
+                                          }
+                                        },
+                                        onChanged: (value) {
+                                          duration = int.parse(value);
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.75,
+                        width: MediaQuery.of(context).size.width / 3.73,
                         child: Card(
                           elevation: 2,
                           color: kGlacier,
@@ -1541,139 +1513,127 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: Wrap(
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        flex: 4,
-                                        child: Text(
-                                          'Linear Access:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        'Linear Access:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        child: Switch(
-                                          value: linear,
-                                          activeColor: kIgris,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              linear = value;
-                                            });
-                                          },
-                                        ),
+                                    ),
+                                    Expanded(
+                                      child: Switch(
+                                        value: linear,
+                                        activeColor: kIgris,
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            linear = value;
+                                          });
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.9,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        flex: 4,
-                                        child: Text(
-                                          'Shuffle:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        'Shuffle:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        child: Switch(
-                                          value: shuffle,
-                                          activeColor: kIgris,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              shuffle = value;
-                                            });
-                                          },
-                                        ),
+                                    ),
+                                    Expanded(
+                                      child: Switch(
+                                        value: shuffle,
+                                        activeColor: kIgris,
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            shuffle = value;
+                                          });
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 3.75,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Card(
-                            elevation: 2,
-                            color: kGlacier,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        flex: 4,
-                                        child: Text(
-                                          'Email Notification:',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
-                                        ),
+                        width: MediaQuery.of(context).size.width / 3.73,
+                        child: Card(
+                          elevation: 2,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        'Email Notification:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
                                       ),
-                                      Expanded(
-                                        child: Switch(
-                                          value: nemail,
-                                          activeColor: kIgris,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              nemail = value;
-                                            });
-                                          },
-                                        ),
+                                    ),
+                                    Expanded(
+                                      child: Switch(
+                                        value: nemail,
+                                        activeColor: kIgris,
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            nemail = value;
+                                          });
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
