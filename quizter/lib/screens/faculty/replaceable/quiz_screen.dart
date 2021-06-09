@@ -94,7 +94,11 @@ class _QuizScreenState extends State<QuizScreen> {
     var temp = quiz.data['me']['usert']['makesSet'][0]['quiz'];
     starttime = DateTime.parse(temp['startTime']);
     endtime = DateTime.parse(temp['endTime']);
-    publishtime = DateTime.parse(temp['publishTime']);
+    try {
+      publishtime = DateTime.parse(temp['publishTime']);
+    } catch (exception) {
+      publishtime = null;
+    }
     linear = temp['linear'];
     shuffle = temp['shuffle'];
     noofs = temp['timesCanTake'];
@@ -289,7 +293,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   String changedate(String dt) {
-    dt = dt.substring(0, 10) + 'T' + dt.substring(11);
+    dt = dt.substring(0, 10) + 'T' + dt.substring(11, 19);
     return dt;
   }
 
@@ -297,7 +301,6 @@ class _QuizScreenState extends State<QuizScreen> {
     if (_formPublish.currentState.validate() &&
         starttime != null &&
         endtime != null &&
-        publishtime != null &&
         classes.isNotEmpty) {
       final QueryResult quiz = await _quiz.queryA(
         gq.updateTQuiz(
@@ -305,7 +308,9 @@ class _QuizScreenState extends State<QuizScreen> {
           accesscode: widget.accesscode,
           start: changedate(starttime.toString()),
           end: changedate(endtime.toString()),
-          publish: changedate(publishtime.toString()),
+          publish: publishtime != null
+              ? publishtime.toString().substring(0, 19)
+              : "",
           linear: linear,
           shuffle: shuffle,
           duration: duration,
@@ -319,14 +324,13 @@ class _QuizScreenState extends State<QuizScreen> {
         final QueryResult takes =
             await _quiz.queryA(gq.takersList(widget.quizId));
         var temp = takes.data['me']['usert']['makesSet'][0]['quiz']['takers'];
-        for (int i = 0; i < temp.length; i++) {
-          final QueryResult publish = await _quiz.queryA(gq.removeTakes(
-              userId: int.parse(temp[i]['user']['id']), quizId: widget.quizId));
-        }
+        // for (int i = 0; i < temp.length; i++) {
+        //   final QueryResult publish = await _quiz.queryA(gq.removeTakes(
+        //       userId: int.parse(temp[i]['user']['id']), quizId: widget.quizId));
+        // }
         final QueryResult cla = await _quiz.queryA(gq.classList());
         temp = cla.data['me']['usert']['teachesSet'];
         for (int i = 0; i < temp.length; i++) {
-          //TODO:logic to correctly submit
           if (assignedto.contains(temp[i]['clas']['className'])) {
             var tem = temp[i]['clas']['belongsSet'];
             for (int j = 0; j < tem.length; j++) {
@@ -335,7 +339,15 @@ class _QuizScreenState extends State<QuizScreen> {
                   quizId: widget.quizId,
                   nemail: nemail));
             }
-            break;
+          } else {
+            var tem = temp[i]['clas']['belongsSet'];
+            for (int j = 0; j < tem.length; j++) {
+              if (assignedto.contains(tem[j]['user']['user']['username']))
+                final QueryResult publish = await _quiz.queryA(gq.setTakes(
+                    userId: int.parse(tem[j]['user']['id']),
+                    quizId: widget.quizId,
+                    nemail: nemail));
+            }
           }
         }
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -369,16 +381,6 @@ class _QuizScreenState extends State<QuizScreen> {
             style:
                 Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
           )));
-    } else if (publishtime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 5),
-          elevation: 4,
-          backgroundColor: kMatte,
-          content: Text(
-            'Since Publish Time was not set, the quiz scores and feedback will not be released to the students.',
-            style:
-                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
-          )));
     } else if (classes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(seconds: 5),
@@ -386,6 +388,16 @@ class _QuizScreenState extends State<QuizScreen> {
           backgroundColor: kMatte,
           content: Text(
             'Please do select a course to apply the quiz to.',
+            style:
+                Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
+          )));
+    } else if (publishtime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 5),
+          elevation: 4,
+          backgroundColor: kMatte,
+          content: Text(
+            'Since Publish Time was not set, the quiz scores and feedback will not be released to the students.',
             style:
                 Theme.of(context).textTheme.bodyText2.copyWith(color: kFrost),
           )));
@@ -691,11 +703,21 @@ class _QuizScreenState extends State<QuizScreen> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Expanded(
-                                              child: Text(
-                                                'Start Time:',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
+                                              child: Tooltip(
+                                                message: "Click to clear time",
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      starttime = null;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    'Start Time:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             Expanded(
@@ -822,11 +844,21 @@ class _QuizScreenState extends State<QuizScreen> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Expanded(
-                                              child: Text(
-                                                'End Time:',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
+                                              child: Tooltip(
+                                                message: "Click to clear time",
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      endtime = null;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    'End Time:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             Expanded(
@@ -953,11 +985,21 @@ class _QuizScreenState extends State<QuizScreen> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Expanded(
-                                              child: Text(
-                                                'Publish Time:',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
+                                              child: Tooltip(
+                                                message: "Click to clear time",
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      publishtime = null;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    'Publish Time:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             Expanded(
@@ -1091,80 +1133,103 @@ class _QuizScreenState extends State<QuizScreen> {
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
-                                  Wrap(
+                                  Column(
                                     children: [
-                                      for (int k = 0;
-                                          k < assignedto.length;
-                                          k++)
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: InputChip(
-                                            padding: EdgeInsets.all(2.0),
-                                            label: Text('${assignedto[k]}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .button),
-                                            selected: false,
-                                            onDeleted: () {
-                                              if (assignedto[k]
-                                                      .toString()
-                                                      .length <
-                                                  10)
-                                                setState(() {
-                                                  classes.add(
-                                                      assignedto[k].toString());
-                                                  students =
-                                                      studentsCopy.toList();
-                                                  assignedto.removeAt(k);
-                                                  for (int l = 0;
-                                                      l < assignedto.length;
-                                                      l++) {
-                                                    int m = 0;
-                                                    while (
-                                                        m < students.length) {
-                                                      if (students[m][1] ==
-                                                          assignedto[l])
-                                                        students.removeAt(m);
-                                                      else if (students[m][0] ==
-                                                          assignedto[l])
-                                                        students.removeAt(m);
-                                                      else
-                                                        m++;
-                                                    }
-                                                  }
-                                                });
-                                              else
-                                                setState(() {
-                                                  students =
-                                                      studentsCopy.toList();
-                                                  assignedto.removeAt(k);
-                                                  for (int l = 0;
-                                                      l < assignedto.length;
-                                                      l++) {
-                                                    int m = 0;
-                                                    while (
-                                                        m < students.length) {
-                                                      if (students[m][1] ==
-                                                          assignedto[l])
-                                                        students.removeAt(m);
-                                                      else if (students[m][0] ==
-                                                          assignedto[l])
-                                                        students.removeAt(m);
-                                                      else
-                                                        m++;
-                                                    }
-                                                  }
-                                                });
-                                              students.sort((a, b) =>
-                                                  a[0].compareTo(b[0]));
-                                              classes.sort();
-                                            },
-                                          ),
-                                        )
+                                      Tooltip(
+                                        message:
+                                            "Please ensure that if individual students are selected, if you wish to select all students in a class; dont have the class selected as well.",
+                                        child: Wrap(
+                                          children: [
+                                            for (int k = 0;
+                                                k < assignedto.length;
+                                                k++)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: InputChip(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  label: Text(
+                                                      '${assignedto[k]}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .button),
+                                                  selected: false,
+                                                  onDeleted: () {
+                                                    if (assignedto[k]
+                                                            .toString()
+                                                            .length <
+                                                        10)
+                                                      setState(() {
+                                                        classes.add(
+                                                            assignedto[k]
+                                                                .toString());
+                                                        students = studentsCopy
+                                                            .toList();
+                                                        assignedto.removeAt(k);
+                                                        for (int l = 0;
+                                                            l <
+                                                                assignedto
+                                                                    .length;
+                                                            l++) {
+                                                          int m = 0;
+                                                          while (m <
+                                                              students.length) {
+                                                            if (students[m]
+                                                                    [1] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else if (students[m]
+                                                                    [0] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else
+                                                              m++;
+                                                          }
+                                                        }
+                                                      });
+                                                    else
+                                                      setState(() {
+                                                        students = studentsCopy
+                                                            .toList();
+                                                        assignedto.removeAt(k);
+                                                        for (int l = 0;
+                                                            l <
+                                                                assignedto
+                                                                    .length;
+                                                            l++) {
+                                                          int m = 0;
+                                                          while (m <
+                                                              students.length) {
+                                                            if (students[m]
+                                                                    [1] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else if (students[m]
+                                                                    [0] ==
+                                                                assignedto[l])
+                                                              students
+                                                                  .removeAt(m);
+                                                            else
+                                                              m++;
+                                                          }
+                                                        }
+                                                      });
+                                                    students.sort((a, b) =>
+                                                        a[0].compareTo(b[0]));
+                                                    classes.sort();
+                                                  },
+                                                ),
+                                              )
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  if (classes.length > 1 || students.length > 0)
+                                  if (classes.length > 1 && students.length > 0)
                                     Tooltip(
                                       message:
                                           "You can add classes or individual students",
@@ -1189,7 +1254,6 @@ class _QuizScreenState extends State<QuizScreen> {
                                             if (newValue != '------')
                                               assignedto.add(newValue);
                                           });
-                                          print(students);
                                         },
                                         items: classes
                                                 .map<DropdownMenuItem<String>>(

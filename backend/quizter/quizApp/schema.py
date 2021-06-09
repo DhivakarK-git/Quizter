@@ -158,7 +158,7 @@ class QuizUInput(graphene.InputObjectType):
     access_code = graphene.String()
     start_time = graphene.DateTime()
     end_time = graphene.DateTime()
-    publish_time = graphene.DateTime()
+    publish_time = graphene.String()
     duration = graphene.Int()
     times_can_take = graphene.Int()
     linear=graphene.Boolean()
@@ -211,7 +211,11 @@ class UpdateQuiz(graphene.Mutation):
         quiz_instance =  Quiz.objects.filter(quiz_name=input.quiz_name,access_code=input.access_code)
         if quiz_instance:
             ok = True
-            quiz_instance.update(start_time=input.start_time,end_time=input.end_time,publish_time=input.publish_time,duration=input.duration,times_can_take=input.times_can_take,linear=input.linear,shuffle=input.shuffle,course=Course.objects.get(course_id=input.course),marks=input.marks)
+            if input.publish_time=="":
+                quiz_instance.update(start_time=input.start_time,end_time=input.end_time,publish_time=None,duration=input.duration,times_can_take=input.times_can_take,linear=input.linear,shuffle=input.shuffle,course=Course.objects.get(course_id=input.course),marks=input.marks)
+            else:
+                publish_time=datetime.datetime.strptime(input.publish_time, '%Y-%m-%d %H:%M:%S')
+                quiz_instance.update(start_time=input.start_time,end_time=input.end_time,publish_time=publish_time,duration=input.duration,times_can_take=input.times_can_take,linear=input.linear,shuffle=input.shuffle,course=Course.objects.get(course_id=input.course),marks=input.marks)
             quiz_instance=quiz_instance[0]
             quiz_instance.save()
             return UpdateQuiz(ok=ok, quiz=quiz_instance)
