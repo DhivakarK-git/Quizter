@@ -668,6 +668,46 @@ mutation {
 ''';
   }
 
+  String getFRQuiz() {
+    return '''
+{
+  me {
+    usert {
+      id
+      makesSet {
+        quizzes {
+          id
+          quizName
+          timesCanTake
+          marks
+          course {
+            courseId
+          }
+          takers{
+      			timesTaken
+            marks
+            user{
+              id
+              user{
+                username
+                firstName
+                lastName
+              }
+            }
+          }
+          makers {
+            user {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+''';
+  }
+
   String setMakes({int quizId, int userId}) {
     return '''
 mutation {
@@ -747,7 +787,27 @@ mutation{
 ''';
   }
 
-  String takersList(quizID) {
+  String takersList(int quizID) {
+    return '''
+{
+  me{
+    usert{
+      makesSet{
+        quiz(id:$quizID){
+          takers{
+            user{
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+''';
+  }
+
+  String takersRList(int quizID) {
     return '''
 {
   me{

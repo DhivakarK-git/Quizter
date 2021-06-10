@@ -1,5 +1,5 @@
 name: quizter
-description: A new Flutter project.
+description: Quizter | A quizapp made Of the Students, By the Students, For the Students
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   animations: ^2.0.0
+  charts_flutter: ^0.10.0
   cupertino_icons: ^1.0.2
   get_it: ^6.0.0
   google_fonts: ^1.1.2
