@@ -8,6 +8,7 @@ import 'package:quizter/graphql/authentication/auth_graphql.dart';
 import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
@@ -20,45 +21,62 @@ class FacResult extends StatefulWidget {
 class _FacResultState extends State<FacResult> {
   AuthGraphQL ag;
   GraphQueries gq = new GraphQueries();
-  GraphQLClient _quiz, _stud;
-  bool showquiz = false, showresult = false;
-  var courseset = [],
-      classlist = [],
-      expanded = [],
+  GraphQLClient _quiz;
+  var quiz,
+      quizset = [],
       quesset = [],
       optset = [],
       pickedset = [],
+      scores = [],
+      scoresseries = Map(),
       current,
       past,
-      userId,
-      result;
+      userId;
+  List<ScoresSeries> chart;
+  bool showquiz = false, showresult = false;
+  int quizid = -1;
+  String quizname = 'ERROR 404', courseId = '';
+
+  double median(var scores) {
+    double median;
+    int middle = scores.length ~/ 2;
+    if (scores.length % 2 == 1) {
+      median = scores[middle];
+    } else {
+      median = ((scores[middle - 1] + scores[middle]) / 2.0);
+    }
+    return median;
+  }
 
   Future<void> getOptions(int quesId) async {
-    final QueryResult quiz = await _quiz.queryA(
-        gq.getROptions(quizId: int.parse(result['id']), quesId: quesId));
+    final QueryResult quiz =
+        await _quiz.queryA(gq.getROptions(quizId: quizid, quesId: quesId));
     if (quiz.hasException) {
       print(quiz.exception);
     } else {
       optset = quiz.data['me']['usert']['makesSet'][0]['quiz']['question']
           ['options'];
-      for (int i = 0; i < optset.length; i++)
-        if (int.parse(optset[i]['user']['id']) == userId) {
+      for (int i = 0; i < optset.length; i++) {
+        if (optset[i]['user']['id'] == userId) {
           for (int j = 0; j < past.length; j++) {
-            if (past[j] == int.parse(optset[i]['answer']['id'])) current[j] = 1;
+            if (past[j] == int.parse(optset[i]['answer']['id'])) {
+              current[j] = 1;
+            }
           }
         }
+      }
     }
   }
 
   Future<String> getAnswerText(int quesId) async {
     try {
-      final QueryResult quiz = await _quiz.queryA(
-          gq.getOptions(quizId: int.parse(result['id']), quesId: quesId));
+      final QueryResult quiz =
+          await _quiz.queryA(gq.getOptions(quizId: quizid, quesId: quesId));
       optset = quiz.data['me']['usert']['takesSet'][0]['quiz']['question']
           ['options'];
       var iter = "";
       if (optset.isNotEmpty) {
-        if (int.parse(optset[0]['user']['id']) == userId)
+        if (optset[0]['user']['id'] == userId)
           iter = optset[0]['answer']['answerText'];
       }
       return iter;
@@ -68,8 +86,7 @@ class _FacResultState extends State<FacResult> {
   }
 
   Future<void> getQuestions() async {
-    final QueryResult quiz =
-        await _quiz.queryA(gq.getRQuiz(int.parse(result['id'])));
+    final QueryResult quiz = await _quiz.queryA(gq.getRQuiz(quizid));
     final snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 5),
@@ -106,8 +123,8 @@ class _FacResultState extends State<FacResult> {
     }
   }
 
-  void getCourses() async {
-    final QueryResult quiz = await _quiz.queryA(gq.classList());
+  void getQuizes() async {
+    final QueryResult quiz = await _quiz.queryA(gq.getFRQuiz());
     final snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 5),
@@ -122,42 +139,67 @@ class _FacResultState extends State<FacResult> {
     } else {
       try {
         setState(() {
-          var temp = quiz.data['me']['usert']['teachesSet'];
-          for (int i = 0; i < temp.length; i++) {
-            var value = temp[i]['clas']['className'].toString(), val;
-            try {
-              switch (int.parse(value[0])) {
-                case 1:
-                  value = "CSE " + value[1];
-                  val = "First Year";
-                  break;
-                case 2:
-                  value = "CSE " + value[1];
-                  val = "Second Year";
-                  break;
-                case 3:
-                  value = "CSE " + value[1];
-                  val = "Third Year";
-                  break;
-                case 4:
-                  value = "CSE " + value[1];
-                  val = "Fourth Year";
-                  break;
-              }
-            } catch (e) {}
-            courseset.add([
-              temp[i]['course']['courseId'],
-              temp[i]['course']['courseName'],
-              value,
-              val,
-              temp[i]['clas']['belongsSet'],
-            ]);
+          int userId = int.parse(quiz.data['me']['usert']['id']);
+          var quizs = quiz.data['me']['usert']['makesSet'][0]['quizzes'];
+          for (int i = 0; i < quizs.length; i++) {
+            var takers = quizs[i]['makers'];
+            var user = [];
+            for (int j = 0; j < takers.length; j++) {
+              user.add(int.parse(takers[j]['user']['id']));
+            }
+            if (user.contains(userId)) {
+              quizset.add(quizs[i]);
+            }
           }
         });
       } catch (exception1) {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
+  }
+
+  String changedate(String dt) {
+    return DateTime.parse(dt)
+        .add(const Duration(hours: 5, minutes: 30))
+        .toString();
+  }
+
+  bool valDate(String dt) {
+    dt = changedate(dt);
+    dt = dt.substring(0, 10);
+    String d = DateTime.now().toString().substring(0, 10);
+    if (dt.substring(5, 7) == d.substring(5, 7)) {
+      int dti = int.parse(dt.substring(8));
+      int di = int.parse(d.substring(8));
+      if (di <= dti && dti <= (di + 7))
+        return true;
+      else
+        return false;
+    } else
+      return false;
+  }
+
+  String parseDate(String dt) {
+    dt = changedate(dt);
+    return (dt.substring(8, 10) + dt.substring(4, 8) + dt.substring(0, 4));
+  }
+
+  String parseTime(String t) {
+    t = changedate(t);
+    t = t.substring(11, 16);
+    int p = int.parse(t.substring(0, 2));
+    if (p > 12) {
+      p = p - 12;
+      t = p.toString() +
+          t.substring(
+            2,
+          ) +
+          " PM";
+
+      if (p < 10) t = "0" + t;
+    } else
+      t = t + " AM";
+    return t;
   }
 
   Widget swap() {
@@ -185,7 +227,7 @@ class _FacResultState extends State<FacResult> {
                     child: Row(
                       children: [
                         Text(
-                          '${result['quizName']}',
+                          '${quizname}',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ],
@@ -436,7 +478,9 @@ class _FacResultState extends State<FacResult> {
                     icon: Icon(Icons.arrow_back),
                     color: kMatte,
                     onPressed: () {
-                      classlist = [];
+                      quizid = null;
+                      quizname = null;
+                      courseId = null;
                       setState(() {
                         showquiz = !showquiz;
                       });
@@ -446,13 +490,13 @@ class _FacResultState extends State<FacResult> {
                   child: Row(
                     children: [
                       Text(
-                        '${classlist[0]}',
+                        '$courseId',
                         style: Theme.of(context).textTheme.headline5,
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 24.0),
                         child: Text(
-                          '${classlist[1]}',
+                          '$quizname',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
@@ -470,206 +514,277 @@ class _FacResultState extends State<FacResult> {
                   controller: _icarus,
                   child: Padding(
                     padding: EdgeInsets.only(right: 16.0),
-                    child: Card(
-                      elevation: 0,
-                      color: kIgris,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: 0,
+                          color: kGlacier,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
+                                      Icon(
+                                        Icons.assessment_outlined,
+                                        color: kMatte,
+                                      ),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
                                       Text(
-                                        '${classlist[2]}',
+                                        "Insights",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headline5
-                                            .copyWith(color: kGlacier),
+                                            .headline6,
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 24.0),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: kFrost,
+                                  thickness: 1,
+                                  endIndent: 16,
+                                  indent: 16,
+                                ),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    Card(
+                                      elevation: 0,
+                                      color: kFrost,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Average",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              "${scores.fold(0, (previous, current) => previous + current) / scores.length} marks",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 0,
+                                      color: kFrost,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Median",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              " marks",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 0,
+                                      color: kFrost,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Range",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              "${scores[0]} - ${scores[scores.length - 1]} marks",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 0,
+                                      color: kFrost,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Total Marks",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              "${quiz['marks']} marks",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Center(
+                                  child: ScoresChart(
+                                    data: chart,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 0,
+                          color: kIgris,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
                                         child: Text(
-                                          '${classlist[3]}',
+                                          "Roll No.",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .headline5
+                                              .bodyText1
+                                              .copyWith(color: kGlacier),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          "Name",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(color: kGlacier),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "Marks",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(color: kGlacier),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          "No. of Submission made",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
                                               .copyWith(color: kGlacier),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.filter_list,
-                                    ),
-                                    color: kGlacier,
-                                    tooltip: 'Filter List',
-                                    onPressed: () {},
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Divider(
-                              color: kGlacier,
-                              thickness: 1,
-                              endIndent: 16,
-                              indent: 16,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      "Roll No.",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      "Name",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      "Email",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: kGlacier),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    color: kIgris,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Divider(
-                              color: kGlacier,
-                              thickness: 1,
-                              endIndent: 16,
-                              indent: 16,
-                            ),
-                            for (int i = 0; i < classlist[4].length; i++)
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['username']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 4,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['firstName']} ${classlist[4][i]['user']['user']['lastName']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 4,
-                                          child: Text(
-                                            "${classlist[4][i]['user']['user']['email']}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(color: kGlacier),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              expanded[i] =
-                                                  expanded[i] == 1 ? 0 : 1;
-                                            });
-                                          },
-                                          child: Icon(
-                                            expanded[i] == 1
-                                                ? Icons.arrow_drop_up
-                                                : Icons.arrow_drop_down,
-                                            color: kGlacier,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (expanded[i] == 1)
-                                      Divider(
-                                        color: kFrost,
-                                        thickness: 1,
-                                      ),
-                                    if (expanded[i] == 1)
-                                      Column(
+                                ),
+                                Divider(
+                                  color: kGlacier,
+                                  thickness: 1,
+                                  endIndent: 16,
+                                  indent: 16,
+                                ),
+                                for (int i = 0; i < quiz['takers'].length; i++)
+                                  TextButton(
+                                    onPressed: () async {
+                                      userId = quiz['takers'][i]['user']['id'];
+                                      await getQuestions();
+                                      showresult = true;
+                                      setState(() {});
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Expanded(
-                                                flex: 4,
-                                                child: Text(
-                                                  "Quiz Name",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 4,
-                                                child: Text(
-                                                  "No. of Submissions Made",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          color: kGlacier),
-                                                ),
-                                              ),
-                                              Expanded(
                                                 flex: 2,
                                                 child: Text(
-                                                  "Marks",
+                                                  "${quiz['takers'][i]['user']['user']['username']}",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1
@@ -678,9 +793,9 @@ class _FacResultState extends State<FacResult> {
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 2,
+                                                flex: 3,
                                                 child: Text(
-                                                  "Total Marks",
+                                                  "${quiz['takers'][i]['user']['user']['firstName']} ${quiz['takers'][i]['user']['user']['lastName']}",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1
@@ -688,128 +803,42 @@ class _FacResultState extends State<FacResult> {
                                                           color: kGlacier),
                                                 ),
                                               ),
-                                              Icon(
-                                                expanded[i] == 1
-                                                    ? Icons.arrow_drop_up
-                                                    : Icons.arrow_drop_down,
-                                                color: kIgris,
+                                              Expanded(
+                                                child: Text(
+                                                  "${quiz['takers'][i]['marks'] != null ? quiz['takers'][i]['marks'] : 'N/A'}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          color: kGlacier),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  "${quiz['takers'][i]['timesTaken']} out of ${quiz['timesCanTake']}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          color: kGlacier),
+                                                ),
                                               ),
                                             ],
+                                          ),
+                                          Divider(
+                                            color: kQuiz,
+                                            thickness: 1,
                                           ),
                                         ],
                                       ),
-                                    Divider(
-                                      color: kQuiz,
-                                      thickness: 1,
                                     ),
-                                    if (expanded[i] == 1)
-                                      for (int j = 0;
-                                          j <
-                                              (classlist[4][i]['user']
-                                                          ['takesSet'][0]
-                                                      ['quizzes'])
-                                                  .length;
-                                          j++)
-                                        if (classlist[4][i]['user']['takesSet']
-                                                    [0]['quizzes'][j]['course']
-                                                ['courseId'] ==
-                                            classlist[0])
-                                          Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: TextButton(
-                                                      onPressed: () async {
-                                                        result = classlist[4][i]
-                                                                    ['user']
-                                                                ['takesSet'][0]
-                                                            ['quizzes'][j];
-                                                        userId = int.parse(
-                                                            classlist[4][i]
-                                                                ['user']['id']);
-                                                        await getQuestions();
-                                                        showresult = true;
-                                                        setState(() {});
-                                                      },
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                              shadowColor:
-                                                                  kMatte,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft),
-                                                      child: Text(
-                                                        "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1
-                                                            .copyWith(
-                                                                color:
-                                                                    kGlacier),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Text(
-                                                      "${find(i, j)} out of ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake']}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      "${findm(i, j)}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .copyWith(
-                                                              color: kGlacier),
-                                                    ),
-                                                  ),
-                                                  Icon(
-                                                    expanded[i] == 1
-                                                        ? Icons.arrow_drop_up
-                                                        : Icons.arrow_drop_down,
-                                                    color: kIgris,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                    if (expanded[i] == 1)
-                                      Divider(
-                                        color: kFrost,
-                                        thickness: 1,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                          ],
+                                  ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -841,6 +870,7 @@ class _FacResultState extends State<FacResult> {
                                 Icons.refresh,
                               ),
                               color: kMatte,
+                              tooltip: 'Filter Quizzes',
                               onPressed: () {
                                 refresh();
                               },
@@ -853,7 +883,7 @@ class _FacResultState extends State<FacResult> {
                                 Icons.tune,
                               ),
                               color: kMatte,
-                              tooltip: 'Filter Courses',
+                              tooltip: 'Filter Quizzes',
                               onPressed: () {},
                             ),
                           ],
@@ -866,7 +896,7 @@ class _FacResultState extends State<FacResult> {
                   child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 208,
-                      child: courseset.isEmpty
+                      child: quizset.isEmpty
                           ? GridView.builder(
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 32.0),
@@ -930,10 +960,9 @@ class _FacResultState extends State<FacResult> {
                                         )));
                               })
                           : GridView.builder(
-                              //TODO: fix card overflow
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 32.0),
-                              itemCount: courseset.length,
+                              itemCount: quizset.length,
                               gridDelegate:
                                   new SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisSpacing: 10,
@@ -945,11 +974,58 @@ class _FacResultState extends State<FacResult> {
                               itemBuilder: (BuildContext context, int index) {
                                 return TextButton(
                                   onPressed: () {
-                                    classlist = courseset[index];
-                                    expanded = List<int>.generate(
-                                        classlist[4].length, (int index) => 0);
-                                    showquiz = true;
-                                    setState(() {});
+                                    quiz = quizset[index];
+
+                                    scores = [];
+                                    for (int j = 0;
+                                        j < quiz['takers'].length;
+                                        j++) {
+                                      if (quiz['takers'][j]['timesTaken'] > 0)
+                                        scores.add(quiz['takers'][j]['marks']);
+                                    }
+
+                                    if (scores.isNotEmpty) {
+                                      quizid = int.parse(quizset[index]['id']);
+                                      quizname = quizset[index]['quizName'];
+                                      courseId =
+                                          quizset[index]['course']['courseId'];
+                                      scores.sort();
+                                      scoresseries = Map();
+                                      chart = [];
+                                      scores.forEach((element) {
+                                        if (!scoresseries
+                                            .containsKey(element)) {
+                                          scoresseries[element] = 1;
+                                        } else {
+                                          scoresseries[element] += 1;
+                                        }
+                                      });
+                                      for (var k in scoresseries.keys) {
+                                        chart.add(ScoresSeries(
+                                            scores: k,
+                                            responses:
+                                                scoresseries[k].toDouble()));
+                                      }
+                                      showquiz = true;
+                                      setState(() {});
+                                    } else {
+                                      quizid = -1;
+                                      quizname = 'Error 404';
+                                      courseId = 'Error 404';
+                                      quiz = null;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              duration: Duration(seconds: 5),
+                                              elevation: 2,
+                                              backgroundColor: kMatte,
+                                              content: Text(
+                                                'The quiz does not have any valid submissions, so, no results can be displayed.',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText2
+                                                    .copyWith(color: kFrost),
+                                              )));
+                                    }
                                   },
                                   style:
                                       TextButton.styleFrom(shadowColor: kMatte),
@@ -966,37 +1042,6 @@ class _FacResultState extends State<FacResult> {
       );
   }
 
-  String find(i, j) {
-    var user = classlist[4][i]['user']['id'];
-    var temp = classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'];
-    for (int k = 0; k < temp.length; k++)
-      if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
-              ['user']['id'] ==
-          user)
-        return classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
-                ['timesTaken']
-            .toString();
-    return '0';
-  }
-
-  String findm(i, j) {
-    var check = int.parse(find(i, j));
-    if (check != 0) {
-      var user = classlist[4][i]['user']['id'];
-      var temp = classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'];
-      for (int k = 0; k < temp.length; k++)
-        if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers'][k]
-                ['user']['id'] ==
-            user)
-          return classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['takers']
-                  [k]['marks']
-              .toString();
-      return '-';
-    } else {
-      return 'N/A';
-    }
-  }
-
   Widget cardQuiz(int index, BuildContext context) {
     return Card(
       color: kIgris,
@@ -1007,40 +1052,21 @@ class _FacResultState extends State<FacResult> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Text(
+              '${quizset[index]['quizName']}',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .copyWith(color: kGlacier),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '${courseset[index][0]}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5
-                      .copyWith(color: kGlacier),
-                ),
-                Text(
-                  '${courseset[index][1]}',
+                  '${quizset[index]['course']['courseId']}',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1
-                      .copyWith(color: kGlacier),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${courseset[index][2]}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      .copyWith(color: kGlacier),
-                ),
-                Text(
-                  '${courseset[index][3]}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
                       .copyWith(color: kGlacier),
                 ),
               ],
@@ -1057,14 +1083,14 @@ class _FacResultState extends State<FacResult> {
     ag = new AuthGraphQL();
     ag.setAuth(Provider.of<Token>(context, listen: false).getToken());
     _quiz = ag.getClient();
-    getCourses();
+    getQuizes();
   }
 
   void refresh() {
     setState(() {
-      courseset = [];
+      quizset = [];
     });
-    getCourses();
+    getQuizes();
   }
 
   @override
@@ -1085,6 +1111,53 @@ class _FacResultState extends State<FacResult> {
       },
       child: swap(),
       reverse: !showquiz,
+    );
+  }
+}
+
+class ScoresSeries {
+  final double scores, responses;
+  final charts.Color barColor = charts.ColorUtil.fromDartColor(kIgris);
+  ScoresSeries({@required this.scores, @required this.responses});
+}
+
+class ScoresChart extends StatelessWidget {
+  final List<ScoresSeries> data;
+
+  ScoresChart({@required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    List<charts.Series<ScoresSeries, String>> series = [
+      charts.Series(
+          id: "Subscribers",
+          data: data,
+          domainFn: (ScoresSeries series, _) => series.scores.toString(),
+          measureFn: (ScoresSeries series, _) => series.responses,
+          colorFn: (ScoresSeries series, _) => series.barColor)
+    ];
+    return Container(
+      height: 400,
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Total Marks Distribution",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: charts.BarChart(series, animate: true),
+          ),
+          Text(
+            "Marks Scored",
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
+        ],
+      ),
     );
   }
 }

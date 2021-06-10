@@ -9,7 +9,6 @@ import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
 
-
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
 
@@ -24,7 +23,6 @@ class _StudCourseState extends State<StudCourse> {
   GraphQLClient _quiz;
   var courseset = [], classlist = [], expanded = [];
   bool showquiz = false;
-  
 
   void getCourses() async {
     final QueryResult quiz = await _quiz.queryA(gq.courselist());
@@ -581,6 +579,7 @@ class _StudCourseState extends State<StudCourse> {
         return "Submitted";
       }
     }
+    return "";
   }
 
   Color clr(i, j) {
@@ -593,6 +592,8 @@ class _StudCourseState extends State<StudCourse> {
     if (x == "Completed") return kGlacier;
 
     if (x == "Upcoming") return kFrost;
+
+    return kFrost;
   }
 
   String findm(i, j) {

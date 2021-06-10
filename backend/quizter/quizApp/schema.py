@@ -84,13 +84,7 @@ class TakesType(DjangoObjectType):
 
     @permissions_checker([IsAuthenticated])
     def resolve_quizzes(self, info, **kwargs):
-        now=timezone.now()
-        temp=Quiz.objects.all()
-        result=[]
-        for i in range(len(temp)):
-            if(temp[i].end_time>=now or now+datetime.timedelta(days=7)>=temp[i].end_time):
-                result.append(temp[i])
-        return result
+        return Quiz.objects.all()
 
 class MakesType(DjangoObjectType):
     class Meta:
