@@ -578,7 +578,7 @@ class _FacResultState extends State<FacResult> {
                                               height: 8,
                                             ),
                                             Text(
-                                              "${scores.fold(0, (previous, current) => previous + current) / scores.length} marks",
+                                              "${double.parse((scores.fold(0, (previous, current) => previous + current) / scores.length).toStringAsFixed(2))} marks",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1,
@@ -610,7 +610,7 @@ class _FacResultState extends State<FacResult> {
                                               height: 8,
                                             ),
                                             Text(
-                                              " marks",
+                                              "${median(scores)}  marks",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1,
