@@ -4,7 +4,7 @@ from django.db import models,IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from quizApp.models import UserT,Course,Clas,Teaches,Belongs,Quiz,Question,Answer,Options,Takes,Makes,Notification
-from dateutil import tz
+from dateutil.tz import tz
 
 utc_tz= tz.gettz('UTC')
 india_tz= tz.gettz('Asia/Kolkata')
@@ -165,10 +165,6 @@ class TestModels(TestCase):
         self.assertEquals(str(self.option.question.question_text),'what')
         self.assertEquals(str(self.option.user),'Ravi')
         self.assertEquals(str(self.option.answer.answer_text),'answer')
-
-    def test_ans_is_assigned_with_question_already_assigned_to_another(self):
-        with self.assertRaises(IntegrityError):
-            Answer.objects.create(question=self.ques,answer_text='answer')
 
     def test_options_is_assigned_with_question_and_user_already_assigned_to_another(self):
         with self.assertRaises(IntegrityError):
