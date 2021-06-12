@@ -1,6 +1,8 @@
 c#!/bin/bash
 
 echo "Running python manage.py testing command:"
-jenkins ALL=(ALL) NOPASSWD: ALL
-sudo apt-get install libsqlite3-dev sqlite-devel 
-./configure --enable-loadable-sqlite-extensions && make && sudo make install
+wget http://www.sqlite.org/2016/sqlite-autoconf-3150000.tar.gz
+tar xvfz sqlite-autoconf-3071502.tar.gz
+cd sqlite-autoconf-3071502
+./configure --prefix=/usr/local
+make install
