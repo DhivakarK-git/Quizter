@@ -1,7 +1,7 @@
 import 'package:graphql/client.dart';
 
 class AuthGraphQL {
-  final baseURL = 'http://127.0.0.1:8000/graphql/';
+  final baseURL = 'http://admin.quizter.codes/graphql/';
   static String _auth;
 
   void setAuth(String value) {
