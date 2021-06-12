@@ -1,5 +1,5 @@
 c#!/bin/bash
 
 echo "Running python manage.py testing command:"
-export LD_LIBRARY_PATH=/usr/local/lib
-sudo apt autoremove python3.5
+pip3.9 install dj-database-url
+python3.9 manage.py test quizApp/tests
