@@ -1,4 +1,4 @@
 c#!/bin/bash
 
 echo "Running python manage.py testing command:"
-python3 manage.py runserver
+python3 manage.py Quizapp/tests
