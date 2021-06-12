@@ -1,6 +1,6 @@
 c#!/bin/bash
 
 echo "Running python manage.py testing command:"
-python3 --version
+sudo apt install python3-pip
 pip3 install python-dateutil  
 python3 manage.py test quizApp/tests 
