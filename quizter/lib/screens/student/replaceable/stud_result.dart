@@ -619,81 +619,101 @@ class _StudResultState extends State<StudResult> {
                                           classlist[0])
                                         Column(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Text(
-                                                    "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                            color: kGlacier),
+                                            TextButton(
+                                              onPressed: () async {
+                                                if ((DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
+                                                        find(i, j) ==
+                                                            classlist[4][i]['user']
+                                                                        ['takesSet'][0]
+                                                                    ['quizzes'][j][
+                                                                'timesCanTake']) &&
+                                                    (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] != "" &&
+                                                        classlist[4][i]['user']
+                                                                        ['takesSet'][0]
+                                                                    ['quizzes'][j]
+                                                                ['publishTime'] !=
+                                                            null &&
+                                                        DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'])).isBefore(DateTime.now()))) {
+                                                  result = classlist[4][i]
+                                                          ['user']['takesSet']
+                                                      [0]['quizzes'][j];
+                                                  await getQuestions();
+                                                  showresult = true;
+                                                  setState(() {});
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          duration: Duration(
+                                                              seconds: 5),
+                                                          elevation: 2,
+                                                          backgroundColor:
+                                                              kMatte,
+                                                          content: Text(
+                                                            'The quiz currently has no feedback assigned to it.',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText2
+                                                                .copyWith(
+                                                                    color:
+                                                                        kFrost),
+                                                          )));
+                                                }
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Text(
+                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: kGlacier),
+                                                    ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    "${findm(i, j)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                            color: kGlacier),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      "${findm(i, j)}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: kGlacier),
+                                                    ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                            color: kGlacier),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                              color: kGlacier),
+                                                    ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
-                                                              find(i, j) ==
-                                                                  classlist[4][i]['user']['takesSet'][0]
-                                                                          ['quizzes'][j]
-                                                                      [
-                                                                      'timesCanTake']) &&
-                                                          (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] !=
-                                                                  "" &&
-                                                              classlist[4][i]['user']['takesSet']
-                                                                          [0]['quizzes'][j]
-                                                                      ['publishTime'] !=
-                                                                  null &&
-                                                              DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'])).isBefore(DateTime.now()))
-                                                      ? TextButton(
-                                                          onPressed: () async {
-                                                            result = classlist[4]
-                                                                            [i]
-                                                                        ['user']
-                                                                    ['takesSet']
-                                                                [
-                                                                0]['quizzes'][j];
-                                                            await getQuestions();
-                                                            showresult = true;
-                                                            setState(() {});
-                                                          },
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                                  shadowColor:
-                                                                      kMatte,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topLeft),
-                                                          child: Text(
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: (DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['endTime'])).isBefore(DateTime.now()) ||
+                                                                find(i, j) ==
+                                                                    classlist[4][i]['user']['takesSet'][0]['quizzes']
+                                                                            [j][
+                                                                        'timesCanTake']) &&
+                                                            (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] !=
+                                                                    "" &&
+                                                                classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime'] !=
+                                                                    null &&
+                                                                DateTime.parse(changedate(classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['publishTime']))
+                                                                    .isBefore(DateTime.now()))
+                                                        ? Text(
                                                             "Yes",
                                                             style: Theme.of(
                                                                     context)
@@ -702,32 +722,32 @@ class _StudResultState extends State<StudResult> {
                                                                 .copyWith(
                                                                   color: kFrost,
                                                                 ),
+                                                          )
+                                                        : Text(
+                                                            "No",
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText1
+                                                                .copyWith(
+                                                                    color:
+                                                                        kFrost),
                                                           ),
-                                                        )
-                                                      : Text(
-                                                          "No",
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .bodyText1
-                                                              .copyWith(
-                                                                  color:
-                                                                      kFrost),
-                                                        ),
-                                                ),
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Text(
-                                                    "${findst(i, j)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                          color: clr(i, j),
-                                                        ),
                                                   ),
-                                                ),
-                                              ],
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Text(
+                                                      "${findst(i, j)}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                          .copyWith(
+                                                            color: clr(i, j),
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),

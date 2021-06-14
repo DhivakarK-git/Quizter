@@ -49,10 +49,10 @@ class QuizType(DjangoObjectType):
 
     @permissions_checker([IsAuthenticated])
     def resolve_question(self, info, **kwargs):
-        id = kwargs.get('id')
+        quiz_id = kwargs.get('id')
 
-        if id is not None:
-            return Question.objects.get(pk=id)
+        if quiz_id is not None:
+            return Question.objects.get(pk=quiz_id)
         return None
 
 
@@ -95,9 +95,9 @@ class MakesType(DjangoObjectType):
 
     @permissions_checker([IsAuthenticated])
     def resolve_quiz(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            return Quiz.objects.get(pk=id)
+        quiz_id = kwargs.get('quiz_id')
+        if quiz_id is not None:
+            return Quiz.objects.get(pk=quiz_id)
         return None
 
     @permissions_checker([IsAuthenticated])
