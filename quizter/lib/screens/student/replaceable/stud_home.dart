@@ -257,7 +257,7 @@ class _StudHomeState extends State<StudHome> {
                       children: [
                         Icon(
                           Icons.account_box,
-                          size: 200,
+                          size: MediaQuery.of(context).size.height / 3.25,
                         ),
                         !show
                             ? Text('Faculty',
@@ -352,8 +352,7 @@ class _StudHomeState extends State<StudHome> {
                                 ),
                               ],
                             ),
-
-                            if (!show)
+                          if (!show)
                             Container()
                           else
                             Row(
@@ -376,7 +375,7 @@ class _StudHomeState extends State<StudHome> {
                                 ),
                               ],
                             ),
-                            if (!show)
+                          if (!show)
                             Container()
                           else
                             Row(
@@ -412,7 +411,7 @@ class _StudHomeState extends State<StudHome> {
                       children: [
                         Icon(
                           Icons.account_box,
-                          size: 200,
+                          size: MediaQuery.of(context).size.height / 3.25,
                           color: kFrost,
                         ),
                       ],
