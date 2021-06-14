@@ -1,0 +1,13 @@
+version: "3.9"
+   
+services:
+  web:
+    build: .
+    command: python quizter/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - ./static:/static
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
