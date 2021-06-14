@@ -70,11 +70,11 @@ void main() async{
           .valDate(DateTime.now().subtract(Duration(days: 7)).toString());
       expect(testFunction, false);
     });
-    test('When date is exactly 7 days from current date expect false', () {
+    test('When date is exactly 7 days from current date expect true', () {
       bool testFunction = a
           .createState()
           .valDate(DateTime.now().add(Duration(days: 7)).toString());
-      expect(testFunction, false);
+      expect(testFunction, true);
     });
   });
 
