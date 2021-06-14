@@ -3,7 +3,7 @@ import 'package:quizter/screens/student/replaceable/quiz_screen.dart';
 import 'package:quizter/screens/faculty/replaceable/add_quiz.dart';
 import 'package:quizter/screens/student/replaceable/stud_quiz.dart';
 
-void main() {
+void main() async{
   group('change_date', () {
     StudQuiz a = new StudQuiz();
     test('When date is before 18:30 expect same day', () {
@@ -25,6 +25,11 @@ void main() {
       String testFunction =
           a.createState().changedate(DateTime(2021, 1, 1, 18, 31).toString());
       expect(testFunction, DateTime(2021, 1, 2, 0, 1).toString());
+    });
+    test('When date is exactly 12:00 expect same day in afternoon', () {
+      String testFunction =
+          a.createState().changedate(DateTime(2021, 1, 1, 6, 30).toString());
+      expect(testFunction, DateTime(2021, 1, 1, 12, 0).toString());
     });
     test(
         'When time is in almost afternoon expect time to be afternoon in 24-hr format',
@@ -65,23 +70,18 @@ void main() {
           .valDate(DateTime.now().subtract(Duration(days: 7)).toString());
       expect(testFunction, false);
     });
-    test('When date is exactly 7 days from current date expect true', () {
+    test('When date is exactly 7 days from current date expect false', () {
       bool testFunction = a
           .createState()
           .valDate(DateTime.now().add(Duration(days: 7)).toString());
-      expect(testFunction, true);
+      expect(testFunction, false);
     });
   });
 
   group('validate_time', () {
     StudQuiz a = new StudQuiz();
-    test('When Date is in YY-MM-DD format expect DD-MM-YY format', () {
-      String testFunction =
-          a.createState().parseDate(DateTime(2021, 1, 1).toString());
-      expect(testFunction, "01-01-2021");
-    });
     test('When time is before start time expect False', () {
-      bool testFunction = a.createState().valTime(DateTime.now().toString(),
+      bool testFunction = a.createState().valTime(DateTime.now().add(Duration(hours: 2)).toString(),
           DateTime.now().add(Duration(hours: 5)).toString());
       expect(testFunction, false);
     });
@@ -98,31 +98,47 @@ void main() {
           DateTime.now().subtract(Duration(hours: 8, minutes: 30)).toString());
       expect(testFunction, false);
     });
-
-    test('When time is exactly start time expect True', () {
-      bool testFunction = a.createState().valTime(
-          DateTime.now().subtract(Duration(hours: 5, minutes: 30)).toString(),
-          DateTime.now().add(Duration(hours: 5)).toString());
-      expect(testFunction, true);
-    });
-    test('When time is exactly end time expect True', () {
-      bool testFunction = a.createState().valTime(
-          DateTime.now().subtract(Duration(hours: 8, minutes: 30)).toString(),
-          DateTime.now().subtract(Duration(hours: 5, minutes: 30)).toString());
-      expect(testFunction, true);
-    });
-  });
-  group('parse_date', () {
-    StudQuiz a = new StudQuiz();
     test('When Date is in YY-MM-DD format expect DD-MM-YY format', () {
       String testFunction =
           a.createState().parseDate(DateTime(2021, 1, 1).toString());
       expect(testFunction, "01-01-2021");
     });
-    test('When Date is in YY-MM-DD format expect DD-MM-YY format', () {
+
+    test('When time is exactly start time expect True', () {
+      bool testFunction = a.createState().valTime(
+          DateTime.now().toString(),
+          DateTime.now().add(Duration(hours: 5)).toString());
+      expect(testFunction, true);
+    });
+    test('2. When time is exactly start time expect True', () {
+      bool testFunction = a.createState().valTime(
+          DateTime.now().toString(),
+          DateTime.now().add(Duration(hours: 8)).toString());
+      expect(testFunction, true);
+    });
+    test('When time is exactly end time expect True', () {
+      bool testFunction = a.createState().valTime(
+          DateTime.now().subtract(Duration(hours: 8, minutes: 30)).toString(),
+          DateTime.now().toString());
+      expect(testFunction, true);
+    });
+  });
+  group('parse_date', () {
+    StudQuiz a = new StudQuiz();
+    test('1. When Date is in YY-MM-DD format expect DD-MM-YY format', () {
+      String testFunction =
+          a.createState().parseDate(DateTime(2021, 1, 1).toString());
+      expect(testFunction, "01-01-2021");
+    });
+    test('2. When Date is in YY-MM-DD format expect DD-MM-YY format', () {
       String testFunction =
           a.createState().parseDate(DateTime(2020, 7, 7).toString());
       expect(testFunction, "07-07-2020");
+    });
+    test('3. When Date is in YY-MM-DD format expect DD-MM-YY format', () {
+      String testFunction =
+          a.createState().parseDate(DateTime(2021, 3, 29).toString());
+      expect(testFunction, "29-03-2021");
     });
   });
 
@@ -171,6 +187,15 @@ void main() {
               .subtract(Duration(hours: 5, minutes: 30))
               .toString());
       expect(testFunction, "12:39 PM");
+    });
+    test(
+        'When time is after 13:00 pm and less than 00:00 AM expect PM in 12 hour format',
+        () {
+      String testFunction = a.createState().parseTime(
+          DateTime(2021, 1, 1, 16, 39)
+              .subtract(Duration(hours: 5, minutes: 30))
+              .toString());
+      expect(testFunction, "04:39 PM");
     });
   });
 
@@ -238,13 +263,32 @@ void main() {
       expect(testFunction,
           t.add(Duration(minutes: 5)).difference(DateTime.now()).inSeconds);
     });
+    test('2. When time is not sufficient expect less duration', () {
+      DateTime t = DateTime.now();
+      QuizScreen a = new QuizScreen(
+          1, "Quiztertest", t.toString().substring(0, 16), () {}, () {}, () {});
+
+      int testFunction = a.createState().confirmTime(
+          5,
+          t
+              .add(Duration(minutes: 8))
+              .subtract(Duration(hours: 5, minutes: 30))
+              .toString()
+              .substring(0, 16));
+      expect(testFunction,
+          t.add(Duration(minutes: 5)).difference(DateTime.now()).inSeconds);
+    });
   });
 
   group('random_string', () {
     AddQuiz a = new AddQuiz(() {});
-    test('When there is sufficient time expect full duration', () {
+    test('1. Expect the same length of the random string', () {
       String testFunction = a.createState().getRandomString(20);
       expect(testFunction.length, 20);
+    });
+    test('2. Expect the same length of the random string', () {
+      String testFunction = a.createState().getRandomString(40);
+      expect(testFunction.length, 40);
     });
   });
 }
