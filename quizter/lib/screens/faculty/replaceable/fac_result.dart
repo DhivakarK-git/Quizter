@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:quizter/constants.dart';
 import 'package:quizter/widgets/hover_extensions.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +11,11 @@ import 'package:quizter/graphql/authentication/auth_graphql.dart';
 import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:file_saver/file_saver.dart';
 
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
@@ -212,28 +219,31 @@ class _FacResultState extends State<FacResult> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child:
+                child: Row(
+                  children: [
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      color: kMatte,
-                      onPressed: () {
-                        setState(() {
-                          showresult = false;
-                        });
-                      }),
-                  Padding(
-                    padding: EdgeInsets.only(left: 24.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${quizname}',
-                          style: Theme.of(context).textTheme.headline5,
+                      IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          color: kMatte,
+                          onPressed: () {
+                            setState(() {
+                              showresult = false;
+                            });
+                          }),
+                      Padding(
+                        padding: EdgeInsets.only(left: 24.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              '${quizname}',
+                              style: Theme.of(context).textTheme.headline5,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ]),
+                      ),
+                    ]),
+                  ],
+                ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -523,33 +533,532 @@ class _FacResultState extends State<FacResult> {
                             padding: EdgeInsets.symmetric(vertical: 16),
                             child: Column(
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.assessment_outlined,
-                                        color: kMatte,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.assessment_outlined,
+                                            color: kMatte,
+                                          ),
+                                          SizedBox(
+                                            width: 16,
+                                          ),
+                                          Text(
+                                            "Insights",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline6,
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        width: 16,
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                      child: IconButton(
+                                        icon: Icon(Icons.print),
+                                        onPressed: () async {
+                                          try {
+                                            int i = 0;
+                                            var data = await rootBundle.load(
+                                                "fonts/Roboto-Regular.ttf");
+                                            var databold = await rootBundle
+                                                .load("fonts/Roboto-Bold.ttf");
+                                            final pdf = pw.Document();
+                                            pdf.addPage(
+                                              pw.MultiPage(
+                                                pageFormat: PdfPageFormat.a4,
+                                                build: (pw.Context context) {
+                                                  return [
+                                                    pw.Container(
+                                                      color: PdfColor.fromHex(
+                                                          '#FFFFFF'),
+                                                      child: pw.Column(
+                                                        children: [
+                                                          pw.Row(
+                                                            crossAxisAlignment: pw
+                                                                .CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              pw.Text(
+                                                                "Insights",
+                                                                style: pw
+                                                                    .TextStyle(
+                                                                  font: pw.Font
+                                                                      .ttf(
+                                                                          data),
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          pw.Divider(
+                                                            color: PdfColor
+                                                                .fromHex(
+                                                                    '#EDEDED'),
+                                                            thickness: 1,
+                                                          ),
+                                                          pw.Wrap(
+                                                            spacing: 8,
+                                                            runSpacing: 8,
+                                                            children: [
+                                                              pw.Container(
+                                                                color: PdfColor
+                                                                    .fromHex(
+                                                                        '#EDEDED'),
+                                                                child:
+                                                                    pw.Padding(
+                                                                  padding: pw.EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          24,
+                                                                      vertical:
+                                                                          16),
+                                                                  child:
+                                                                      pw.Column(
+                                                                    crossAxisAlignment: pw
+                                                                        .CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      pw.Text(
+                                                                        "Average",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(databold),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                      pw.SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                      pw.Text(
+                                                                        "${double.parse((scores.fold(0, (previous, current) => previous + current) / scores.length).toStringAsFixed(2))} marks",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              pw.Container(
+                                                                color: PdfColor
+                                                                    .fromHex(
+                                                                        '#EDEDED'),
+                                                                child:
+                                                                    pw.Padding(
+                                                                  padding: pw.EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          24,
+                                                                      vertical:
+                                                                          16),
+                                                                  child:
+                                                                      pw.Column(
+                                                                    crossAxisAlignment: pw
+                                                                        .CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      pw.Text(
+                                                                        "Median",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(databold),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                      pw.SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                      pw.Text(
+                                                                        "${median(scores)}  marks",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              pw.Container(
+                                                                color: PdfColor
+                                                                    .fromHex(
+                                                                        '#EDEDED'),
+                                                                child:
+                                                                    pw.Padding(
+                                                                  padding: pw.EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          24,
+                                                                      vertical:
+                                                                          16),
+                                                                  child:
+                                                                      pw.Column(
+                                                                    crossAxisAlignment: pw
+                                                                        .CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      pw.Text(
+                                                                        "Range",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(databold),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                      pw.SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                      pw.Text(
+                                                                        "${scores[0]} - ${scores[scores.length - 1]} marks",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              pw.Container(
+                                                                color: PdfColor
+                                                                    .fromHex(
+                                                                        '#EDEDED'),
+                                                                child:
+                                                                    pw.Padding(
+                                                                  padding: pw.EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          24,
+                                                                      vertical:
+                                                                          16),
+                                                                  child:
+                                                                      pw.Column(
+                                                                    crossAxisAlignment: pw
+                                                                        .CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      pw.Text(
+                                                                        "Total Marks",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(databold),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                      pw.SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                      pw.Text(
+                                                                        "${quiz['marks']} marks",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    pw.SizedBox(
+                                                      height: 32,
+                                                    ),
+                                                    pw.Container(
+                                                      color: PdfColor.fromHex(
+                                                          '#5754E6'),
+                                                      child: pw.Padding(
+                                                        padding: pw.EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 16),
+                                                        child: pw.Column(
+                                                          children: [
+                                                            pw.Padding(
+                                                              padding: pw
+                                                                      .EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16),
+                                                              child: pw.Row(
+                                                                mainAxisAlignment: pw
+                                                                    .MainAxisAlignment
+                                                                    .spaceBetween,
+                                                                crossAxisAlignment:
+                                                                    pw.CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  pw.Expanded(
+                                                                    flex: 2,
+                                                                    child:
+                                                                        pw.Text(
+                                                                      "Roll No.",
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        color: PdfColor.fromHex(
+                                                                            '#FFFFFF'),
+                                                                        font: pw.Font.ttf(
+                                                                            data),
+                                                                        fontSize:
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  pw.Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        pw.Text(
+                                                                      "Name",
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        color: PdfColor.fromHex(
+                                                                            '#FFFFFF'),
+                                                                        font: pw.Font.ttf(
+                                                                            data),
+                                                                        fontSize:
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  pw.Expanded(
+                                                                    child:
+                                                                        pw.Text(
+                                                                      "Marks",
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        color: PdfColor.fromHex(
+                                                                            '#FFFFFF'),
+                                                                        font: pw.Font.ttf(
+                                                                            data),
+                                                                        fontSize:
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  pw.Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        pw.Text(
+                                                                      "No. of Submission made",
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        color: PdfColor.fromHex(
+                                                                            '#FFFFFF'),
+                                                                        font: pw.Font.ttf(
+                                                                            data),
+                                                                        fontSize:
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            pw.Divider(
+                                                              color: PdfColor
+                                                                  .fromHex(
+                                                                      '#FFFFFF'),
+                                                              thickness: 1,
+                                                              endIndent: 16,
+                                                              indent: 16,
+                                                            ),
+                                                            for (;
+                                                                i < quiz['takers'].length &&
+                                                                    i < 20;
+                                                                i++)
+                                                              pw.Padding(
+                                                                padding: pw
+                                                                        .EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            16),
+                                                                child:
+                                                                    pw.Column(
+                                                                  crossAxisAlignment: pw
+                                                                      .CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    pw.Row(
+                                                                      mainAxisAlignment: pw
+                                                                          .MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                      crossAxisAlignment: pw
+                                                                          .CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        pw.Expanded(
+                                                                          flex:
+                                                                              2,
+                                                                          child:
+                                                                              pw.Text(
+                                                                            "${quiz['takers'][i]['user']['user']['username']}",
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        pw.Expanded(
+                                                                          flex:
+                                                                              3,
+                                                                          child:
+                                                                              pw.Text(
+                                                                            "${quiz['takers'][i]['user']['user']['firstName']} ${quiz['takers'][i]['user']['user']['lastName']}",
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        pw.Expanded(
+                                                                          child:
+                                                                              pw.Text(
+                                                                            "${quiz['takers'][i]['marks'] != null ? quiz['takers'][i]['marks'] : 'N/A'}",
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        pw.Expanded(
+                                                                          flex:
+                                                                              3,
+                                                                          child:
+                                                                              pw.Text(
+                                                                            "${quiz['takers'][i]['timesTaken']} out of ${quiz['timesCanTake']}",
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    pw.Divider(
+                                                                      color: PdfColor
+                                                                          .fromHex(
+                                                                              '#6C69F4'),
+                                                                      thickness:
+                                                                          1,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ];
+                                                },
+                                              ),
+                                            );
+                                            if (kIsWeb) {
+                                              final output =
+                                                  '$courseId${quizname.replaceAll(' ', '')}';
+                                              await FileSaver.instance.saveFile(
+                                                  output,
+                                                  await pdf.save(),
+                                                  'pdf',
+                                                  mimeType: MimeType.PDF);
+                                            } else {
+                                              final output =
+                                                  await getTemporaryDirectory();
+
+                                              final file = File(
+                                                  '${output.path}\\$courseId${quizname.replaceAll(' ', '')}.pdf');
+                                              await file.writeAsBytes(
+                                                  await pdf.save());
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      duration:
+                                                          Duration(seconds: 10),
+                                                      elevation: 2,
+                                                      backgroundColor: kMatte,
+                                                      content: SelectableText(
+                                                        'The Report has been saved in ${output.path}\\$courseId${quizname.replaceAll(' ', '')}.pdf',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText2
+                                                            .copyWith(
+                                                                color: kFrost),
+                                                      )));
+                                            }
+                                          } catch (exception) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    duration:
+                                                        Duration(seconds: 10),
+                                                    elevation: 2,
+                                                    backgroundColor: kMatte,
+                                                    content: SelectableText(
+                                                      'There was some error in downloadinf the file. $exception',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2
+                                                          .copyWith(
+                                                              color: kFrost),
+                                                    )));
+                                          }
+                                        },
                                       ),
-                                      Text(
-                                        "Insights",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                                 Divider(
                                   color: kFrost,
                                   thickness: 1,
                                   endIndent: 16,
                                   indent: 16,
+                                ),
+                                Center(
+                                  child: ScoresChart(
+                                    data: chart,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 16,
                                 ),
                                 Wrap(
                                   spacing: 8,
@@ -684,14 +1193,6 @@ class _FacResultState extends State<FacResult> {
                                       ),
                                     ),
                                   ],
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Center(
-                                  child: ScoresChart(
-                                    data: chart,
-                                  ),
                                 ),
                               ],
                             ),
