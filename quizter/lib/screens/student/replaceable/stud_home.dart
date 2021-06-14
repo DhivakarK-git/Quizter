@@ -260,7 +260,7 @@ class _StudHomeState extends State<StudHome> {
                           size: MediaQuery.of(context).size.height / 3.25,
                         ),
                         !show
-                            ? Text('Faculty',
+                            ? Text('Student',
                                 style: Theme.of(context).textTheme.headline6)
                             : Text('$un',
                                 style: Theme.of(context).textTheme.headline6),
