@@ -155,7 +155,7 @@ class _FacHomeState extends State<FacHome> {
                       children: [
                         Icon(
                           Icons.account_box,
-                          size: 200,
+                          size: MediaQuery.of(context).size.height / 3.25,
                         ),
                         !show
                             ? Text('Faculty',
@@ -285,7 +285,7 @@ class _FacHomeState extends State<FacHome> {
                       children: [
                         Icon(
                           Icons.account_box,
-                          size: 200,
+                          size: MediaQuery.of(context).size.height / 3.25,
                           color: kFrost,
                         ),
                       ],
