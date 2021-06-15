@@ -456,7 +456,7 @@ class _SDashScreenState extends State<SDashScreen> {
                       child: child,
                     );
                   },
-                  child: StudRouter.getRoute(_selectedIndex),
+                  child: StudRouter.getRoute(_selectedIndex,widget.username,widget.firstName,widget.lastName),
                 ),
               ),
             ),

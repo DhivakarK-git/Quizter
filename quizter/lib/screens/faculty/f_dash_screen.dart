@@ -463,7 +463,7 @@ class _FDashScreenState extends State<FDashScreen> {
                   child: FacRouter.getRoute(_selectedIndex, () {
                     _selectedIndex = 2;
                     setState(() {});
-                  }),
+                  },widget.username,widget.firstName,widget.lastName),
                 ),
               ),
             ),
