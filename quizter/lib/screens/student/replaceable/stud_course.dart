@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:quizter/constants.dart';
@@ -8,11 +11,18 @@ import 'package:quizter/graphql/authentication/auth_graphql.dart';
 import 'package:graphql/client.dart';
 import 'package:quizter/graphql/graphqueries.dart';
 import 'package:animations/animations.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:file_saver/file_saver.dart';
 
 final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
 
 class StudCourse extends StatefulWidget {
+  final String  username,firstname,lastname;
+  StudCourse(this.username,this.firstname,this.lastname);
   @override
   _StudCourseState createState() => _StudCourseState();
 }
@@ -166,11 +176,406 @@ class _StudCourseState extends State<StudCourse> {
                                   ),
                                   IconButton(
                                     icon: Icon(
-                                      Icons.filter_list,
+                                      Icons.print,
                                     ),
                                     color: kGlacier,
-                                    tooltip: 'Filter List',
-                                    onPressed: () {},
+                                    tooltip: 'print PDF',
+                                    onPressed: () async{
+                                      try{
+                                        var data = await rootBundle.load(
+                                              "fonts/Roboto-Regular.ttf");
+                                      var databold = await rootBundle
+                                              .load("fonts/Roboto-Bold.ttf");
+                                      final pdf = pw.Document();
+                                      pdf.addPage(
+                                        pw.MultiPage(
+                                          pageFormat: PdfPageFormat.a4,
+                                          build: (pw.Context context) {
+                                            return [
+                                              pw.Container(child: 
+                                              pw.Column(children:[
+                                                pw.Row(
+                                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                                  children: [
+                                                    pw.Expanded(child:pw.Text(
+                                                                        "STUDENT REPORT",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(databold),
+                                                                          fontSize:
+                                                                              18,
+                                                                        ),
+                                                                      ),)
+                                                  ]
+                                                ),
+                                                pw.Divider(
+                                                            color: PdfColor
+                                                                .fromHex(
+                                                                    '#EDEDED'),
+                                                            thickness: 1,
+                                                          ),
+                                                pw.Row(children:[
+                                                            pw.Expanded(child: 
+                                                            pw.Text(
+                                                                        "Course Code: ${classlist[0]}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),),
+                                                            pw.Expanded(child: 
+                                                            pw.Text(
+                                                                        "Course Name: ${classlist[1]}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),)
+                                                          ] ),
+                                                          pw.Row(children:[
+                                                            pw.Expanded(child: 
+                                                            pw.Text(
+                                                                        "Username: ${widget.username}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),),
+                                                            pw.Expanded(child: 
+                                                            pw.Text(
+                                                                        "Name: ${widget.firstname} ${widget.lastname}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                      ),)
+                                                          ] ),
+                                                          pw.Divider(
+                                                            color: PdfColor
+                                                                .fromHex(
+                                                                    '#EDEDED'),
+                                                            thickness: 1,
+                                                          ),
+                                              ] 
+                                              ),
+                                              ),
+                                              pw.Container(
+                                                color: PdfColor.fromHex(
+                                                                                        '#5754E6'),
+                                                child: pw.Padding(
+                                                  padding: pw.EdgeInsets.symmetric(vertical: 16),
+                                                  child: pw.Column(
+                                                    children: [
+                                                      pw.Padding(
+                                                        padding: pw.EdgeInsets.symmetric(horizontal: 24.0),
+                                                        child: pw.Row(
+                                                          mainAxisAlignment:
+                                                              pw.MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            pw.Row(
+                                                              children: [
+                                                                pw.Text(
+                                                                  '${classlist[2]}',
+                                                                  style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(databold),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                ),
+                                                                pw.Padding(
+                                                                  padding:
+                                                                      const pw.EdgeInsets.only(left: 24.0),
+                                                                  child: pw.Text(
+                                                                    '${classlist[3]}',
+                                                                     style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(databold),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      pw.Divider(
+                                                        color: PdfColor.fromHex(
+                                                                                        '#FFFFFF'),
+                                                        thickness: 1,
+                                                        endIndent: 16,
+                                                        indent: 16,
+                                                      ),
+                                                      pw.Padding(
+                                                        padding: pw.EdgeInsets.symmetric(horizontal: 16),
+                                                        child: pw.Row(
+                                                          mainAxisAlignment:
+                                                              pw.MainAxisAlignment.spaceBetween,
+                                                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                        ),
+                                                      ),
+                                                      for (int i = 0; i < classlist[4].length; i++)
+                                                        pw.Padding(
+                                                          padding: pw.EdgeInsets.symmetric(horizontal: 16),
+                                                          child: pw.Column(
+                                                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                            children: [
+                                                              pw.Column(
+                                                                children: [
+                                                                  pw.Row(
+                                                                    mainAxisAlignment:
+                                                                        pw.MainAxisAlignment.spaceBetween,
+                                                                    crossAxisAlignment:
+                                                                        pw.CrossAxisAlignment.end,
+                                                                    children: [
+                                                                      pw.Expanded(
+                                                                        flex: 4,
+                                                                        child: pw.Text(
+                                                                          "Quiz Name",
+                                                                           style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                      pw.Expanded(
+                                                                        flex: 4,
+                                                                        child: pw.Text(
+                                                                          "No. of Submissions Made",
+                                                                           style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                      pw.Expanded(
+                                                                        flex: 2,
+                                                                        child: pw.Text(
+                                                                          "Marks",
+                                                                           style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                      pw.Expanded(
+                                                                        flex: 2,
+                                                                        child: pw.Text(
+                                                                          "Total Marks",
+                                                                           style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                      pw.Expanded(
+                                                                        flex: 4,
+                                                                        child: pw.Text(
+                                                                          "Status",
+                                                                           style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              pw.Divider(
+                                                                color: PdfColor.fromHex(
+                                                                                        '#FFFFFF'),
+                                                                thickness: 1,
+                                                              ),
+                                                              for (int j = 0;
+                                                                  j <
+                                                                      (classlist[4][i]['user']['takesSet']
+                                                                              [0]['quizzes'])
+                                                                          .length;
+                                                                  j++)
+                                                                if (classlist[4][i]['user']['takesSet'][0]
+                                                                            ['quizzes'][j]['course']
+                                                                        ['courseId'] ==
+                                                                    classlist[0])
+                                                                  pw.Column(
+                                                                    children: [
+                                                                      pw.Row(
+                                                                        mainAxisAlignment:
+                                                                            pw.MainAxisAlignment
+                                                                                .spaceBetween,
+                                                                        crossAxisAlignment:
+                                                                            pw.CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          pw.Expanded(
+                                                                            flex: 4,
+                                                                            child: pw.Text(
+                                                                              "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
+                                                                               style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                            ),
+                                                                          ),
+                                                                          pw.Expanded(
+                                                                            flex: 4,
+                                                                            child: pw.Text(
+                                                                              "${find(i, j)} out of ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake']}",
+                                                                               style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                            ),
+                                                                          ),
+                                                                          pw.Expanded(
+                                                                            flex: 2,
+                                                                            child: pw.Text(
+                                                                              "${findm(i, j)}",
+                                                                               style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                            ),
+                                                                          ),
+                                                                          pw.Expanded(
+                                                                            flex: 2,
+                                                                            child: pw.Text(
+                                                                              "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
+                                                                               style: pw.TextStyle(
+                                                                    font:
+                                                                    pw.Font.ttf(data),
+                                                                    fontSize:8,
+                                                                    color:PdfColor.fromHex(
+                                                                                        '#FFFFFF'), 
+                                                                    ),
+                                                                            ),
+                                                                          ),
+                                                                          pw.Expanded(
+                                                                            flex: 4,
+                                                                            child: pw.Text(
+                                                                              "${findst(i, j)}",
+                                                                              style: pw.TextStyle(
+                                                                                                      font:
+                                                                                            pw.Font.ttf(data),
+                                                                                            fontSize:
+                                                                                              10,
+                                                                                              color:PdfColor
+                                                                                            .fromHex(
+                                                                                                "${cler(i,j)}") ,),
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+
+                                            ];
+
+                                              },
+                                            ),
+                                          );
+                                        if (kIsWeb) {
+                                            final output =
+                                                'Stud-${classlist[0]}';
+                                            await FileSaver.instance.saveFile(
+                                                output,
+                                                await pdf.save(),
+                                                'pdf',
+                                                mimeType: MimeType.PDF);
+                                          } else {
+                                            final output =
+                                                await getTemporaryDirectory();
+
+                                            final file = File(
+                                                '${output.path}\\Stud-${classlist[0]}.pdf');
+                                            await file.writeAsBytes(
+                                                await pdf.save());
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    duration:
+                                                        Duration(seconds: 10),
+                                                    elevation: 2,
+                                                    backgroundColor: kMatte,
+                                                    content: SelectableText(
+                                                      'The Report has been saved in ${output.path}\\Stud-${classlist[0]}.pdf',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2
+                                                          .copyWith(
+                                                              color: kFrost),
+                                                    )
+                                                    )
+                                                    );
+                                          }
+                                      }
+                                      catch(exception)
+                                      {
+                                        ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    duration:
+                                                        Duration(seconds: 10),
+                                                    elevation: 2,
+                                                    backgroundColor: kMatte,
+                                                    content: SelectableText(
+                                                      'There was some error in downloadinf the file. $exception',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2
+                                                          .copyWith(
+                                                              color: kFrost),
+                                                    )));
+                                      }
+
+                                    },
                                   ),
                                 ],
                               ),
@@ -580,6 +985,19 @@ class _StudCourseState extends State<StudCourse> {
       }
     }
     return "";
+  }
+  String cler(i, j) {
+    var x = findst(i, j);
+    if (x == "Active" || x == "Submitted & Active" || x == "Submitted")
+      return "#66DD66";
+
+    if (x == "Expired") return "#1A1A1A";
+
+    if (x == "Completed") return "#FFFFFF";
+
+    if (x == "Upcoming") return "#EDEDED";
+
+    return "#EDEDED" ;
   }
 
   Color clr(i, j) {

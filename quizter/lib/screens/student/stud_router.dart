@@ -5,7 +5,7 @@ import 'package:quizter/screens/student/replaceable/stud_course.dart';
 import 'package:quizter/screens/student/replaceable/stud_result.dart';
 
 class StudRouter {
-  static Widget getRoute(int index) {
+  static Widget getRoute(int index,String username,String firstname,String lastname) {
     switch (index) {
       case 0:
         {
@@ -14,7 +14,7 @@ class StudRouter {
         break;
       case 1:
         {
-          return StudCourse();
+          return StudCourse(username,firstname,lastname);
         }
         break;
       case 2:

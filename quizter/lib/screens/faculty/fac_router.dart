@@ -6,7 +6,7 @@ import 'package:quizter/screens/faculty/replaceable/fac_result.dart';
 import 'package:quizter/screens/faculty/replaceable/add_quiz.dart';
 
 class FacRouter {
-  static Widget getRoute(int index, Function goback) {
+  static Widget getRoute(int index, Function goback,String username,String firstname,String lastname) {
     switch (index) {
       case 0:
         {
@@ -15,7 +15,7 @@ class FacRouter {
         break;
       case 1:
         {
-          return FacCourse();
+          return FacCourse(username,firstname,lastname);
         }
         break;
       case 2:
@@ -25,7 +25,7 @@ class FacRouter {
         break;
       case 3:
         {
-          return FacResult();
+          return FacResult(username,firstname,lastname);
         }
         break;
       case 4:
