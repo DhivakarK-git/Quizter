@@ -20,9 +20,8 @@ final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
 
 class FacResult extends StatefulWidget {
-  final String  username,firstname,lastname;
-  FacResult(this.username,this.firstname,this.lastname);
-  
+  final String username, firstname, lastname;
+  FacResult(this.username, this.firstname, this.lastname);
 
   @override
   _FacResultState createState() => _FacResultState();
@@ -570,7 +569,6 @@ class _FacResultState extends State<FacResult> {
                                         icon: Icon(Icons.print),
                                         onPressed: () async {
                                           try {
-                                    
                                             var data = await rootBundle.load(
                                                 "fonts/Roboto-Regular.ttf");
                                             var databold = await rootBundle
@@ -582,85 +580,73 @@ class _FacResultState extends State<FacResult> {
                                                 build: (pw.Context context) {
                                                   return [
                                                     pw.Container(
-                                                      child:pw.Column(
-                                                        children: [
-                                                          pw.Row(children:[
-                                                            pw.Padding(padding: pw.EdgeInsets.only(left: 120.0),
-                                                            child:pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "FACULTY RESULTS REPORT",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(databold),
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),), )
-                                                          ] ),
-                                                          pw.Divider(
-                                                            color: PdfColor
-                                                                .fromHex(
-                                                                    '#EDEDED'),
-                                                            thickness: 1,
+                                                        child: pw
+                                                            .Column(children: [
+                                                      pw.Center(
+                                                        child: pw.Text(
+                                                          "FACULTY RESULTS REPORT",
+                                                          style: pw.TextStyle(
+                                                            font: pw.Font.ttf(
+                                                                databold),
+                                                            fontSize: 18,
                                                           ),
-                                                          pw.Row(children:[
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Course: ${courseId}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),),
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Quiz: ${quizname}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),)
-                                                          ] ),
-                                                          pw.Row(children:[
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Username: ${widget.username}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),),
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Name: ${widget.firstname} ${widget.lastname}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),)
-                                                          ] ),
-                                                          pw.Divider(
-                                                            color: PdfColor
-                                                                .fromHex(
-                                                                    '#EDEDED'),
-                                                            thickness: 1,
+                                                        ),
+                                                      ),
+                                                      pw.Divider(
+                                                        color: PdfColor.fromHex(
+                                                            '#EDEDED'),
+                                                        thickness: 1,
+                                                      ),
+                                                      pw.Row(children: [
+                                                        pw.Expanded(
+                                                          child: pw.Text(
+                                                            "Course: ${courseId}",
+                                                            style: pw.TextStyle(
+                                                              font: pw.Font.ttf(
+                                                                  data),
+                                                              fontSize: 12,
+                                                            ),
                                                           ),
-                                                        ]
-                                                      )
-                                                    ),
+                                                        ),
+                                                        pw.Expanded(
+                                                          child: pw.Text(
+                                                            "Quiz: ${quizname}",
+                                                            style: pw.TextStyle(
+                                                              font: pw.Font.ttf(
+                                                                  data),
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ]),
+                                                      pw.Row(children: [
+                                                        pw.Expanded(
+                                                          child: pw.Text(
+                                                            "Username: ${widget.username}",
+                                                            style: pw.TextStyle(
+                                                              font: pw.Font.ttf(
+                                                                  data),
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        pw.Expanded(
+                                                          child: pw.Text(
+                                                            "Name: ${widget.firstname} ${widget.lastname}",
+                                                            style: pw.TextStyle(
+                                                              font: pw.Font.ttf(
+                                                                  data),
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ]),
+                                                      pw.Divider(
+                                                        color: PdfColor.fromHex(
+                                                            '#EDEDED'),
+                                                        thickness: 1,
+                                                      ),
+                                                    ])),
                                                     pw.Container(
                                                       color: PdfColor.fromHex(
                                                           '#FFFFFF'),
@@ -978,7 +964,7 @@ class _FacResultState extends State<FacResult> {
                                                               endIndent: 16,
                                                               indent: 16,
                                                             ),
-                                                            for (int  i=0;
+                                                            for (int i = 0;
                                                                 i < quiz['takers'].length &&
                                                                     i < 20;
                                                                 i++)
