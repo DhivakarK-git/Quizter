@@ -1,3 +1,2 @@
 c#!/bin/bash
-echo "running dockers:"
-docker-compose --version
+python3.9 manage.py runserver 0.0.0.0:80
