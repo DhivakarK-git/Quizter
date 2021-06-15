@@ -1,4 +1,5 @@
 c#!/bin/bash
+sudo usermod -a -G docker jenkins
 mkdir -p .pip_cache
 docker build -t djangodemo .
 docker run -it -p 8020:8020 \
