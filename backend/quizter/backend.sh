@@ -1,4 +1,6 @@
 c#!/bin/bash
 
-echo "build  command:"
+echo "verify the requirements command:"
 flutter --version
+django --version
+python3.9 --version
