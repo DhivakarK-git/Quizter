@@ -21,8 +21,8 @@ final nonHoverTransform = Matrix4.identity()..translate(0, 0, 0);
 final hoverTransform = Matrix4.identity()..translate(0, -5, 0);
 
 class FacCourse extends StatefulWidget {
-  final String  username,firstname,lastname;
-  FacCourse(this.username,this.firstname,this.lastname);
+  final String username, firstname, lastname;
+  FacCourse(this.username, this.firstname, this.lastname);
   @override
   _FacCourseState createState() => _FacCourseState();
 }
@@ -516,392 +516,418 @@ class _FacCourseState extends State<FacCourse> {
                                     ],
                                   ),
                                   IconButton(
-                                  icon: Icon(
-                                    Icons.print
-                                  ),
-                                  color: kGlacier,
-                                  tooltip: 'Print PDF',
-                                  onPressed: () async {
-                                    try{
-                                      var data = await rootBundle.load(
-                                              "fonts/Roboto-Regular.ttf");
-                                      var databold = await rootBundle
-                                              .load("fonts/Roboto-Bold.ttf");
-                                      final pdf = pw.Document();
-                                      pdf.addPage(
-                                        pw.MultiPage(
-                                          pageFormat: PdfPageFormat.a4,
-                                          build: (pw.Context context) {
-                                            return [
-                                              pw.Container(child: 
-                                              pw.Column(children:[
-                                                pw.Row(
-                                                  children: [
-                                                    pw.Padding(padding: pw.EdgeInsets.only(left:120),
-                                                    child: 
-                                                    pw.Expanded(child:pw.Text(
-                                                                        "FACULTY COURSE REPORT",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(databold),
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),),
-                                                    )
-                                                  ]
+                                    icon: Icon(Icons.print),
+                                    color: kGlacier,
+                                    tooltip: 'Print PDF',
+                                    onPressed: () async {
+                                      try {
+                                        var data = await rootBundle
+                                            .load("fonts/Roboto-Regular.ttf");
+                                        var databold = await rootBundle
+                                            .load("fonts/Roboto-Bold.ttf");
+                                        final pdf = pw.Document();
+                                        pdf.addPage(
+                                          pw.MultiPage(
+                                            pageFormat: PdfPageFormat.a4,
+                                            build: (pw.Context context) {
+                                              return [
+                                                pw.Container(
+                                                  child: pw.Column(children: [
+                                                    pw.Center(
+                                                      child: pw.Text(
+                                                        "FACULTY COURSE REPORT",
+                                                        style: pw.TextStyle(
+                                                          font: pw.Font.ttf(
+                                                              databold),
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    pw.Divider(
+                                                      color: PdfColor.fromHex(
+                                                          '#EDEDED'),
+                                                      thickness: 1,
+                                                    ),
+                                                    pw.Row(children: [
+                                                      pw.Expanded(
+                                                        child: pw.Text(
+                                                          "Course Code: ${classlist[0]}",
+                                                          style: pw.TextStyle(
+                                                            font: pw.Font.ttf(
+                                                                data),
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      pw.Expanded(
+                                                        child: pw.Text(
+                                                          "Course Name: ${classlist[1]}",
+                                                          style: pw.TextStyle(
+                                                            font: pw.Font.ttf(
+                                                                data),
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ]),
+                                                    pw.Row(children: [
+                                                      pw.Expanded(
+                                                        child: pw.Text(
+                                                          "Username: ${widget.username}",
+                                                          style: pw.TextStyle(
+                                                            font: pw.Font.ttf(
+                                                                data),
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      pw.Expanded(
+                                                        child: pw.Text(
+                                                          "Name: ${widget.firstname} ${widget.lastname}",
+                                                          style: pw.TextStyle(
+                                                            font: pw.Font.ttf(
+                                                                data),
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ]),
+                                                    pw.Divider(
+                                                      color: PdfColor.fromHex(
+                                                          '#EDEDED'),
+                                                      thickness: 1,
+                                                    ),
+                                                  ]),
                                                 ),
-                                                pw.Divider(
-                                                            color: PdfColor
-                                                                .fromHex(
-                                                                    '#EDEDED'),
-                                                            thickness: 1,
-                                                          ),
-                                                pw.Row(children:[
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Course Code: ${classlist[0]}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),),
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Course Name: ${classlist[1]}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),)
-                                                          ] ),
-                                                          pw.Row(children:[
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Username: ${widget.username}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),),
-                                                            pw.Expanded(child: 
-                                                            pw.Text(
-                                                                        "Name: ${widget.firstname} ${widget.lastname}",
-                                                                        style: pw
-                                                                            .TextStyle(
-                                                                          font:
-                                                                              pw.Font.ttf(data),
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),)
-                                                          ] ),
-                                                          pw.Divider(
-                                                            color: PdfColor
-                                                                .fromHex(
-                                                                    '#EDEDED'),
-                                                            thickness: 1,
-                                                          ),
-                                              ] 
-                                              ),
-                                              ),
-                                            
-                                              pw.Container(
-                                                color: PdfColor
-                                                          .fromHex(
-                                                              '#5754E6'),
-                                                child: pw.Padding(
-                                                  padding: pw.EdgeInsets.symmetric(vertical: 16),
-                                                  child: pw.Column(
-                                                    children: [
-                                                      pw.Padding(
-                                                        padding: pw.EdgeInsets.symmetric(horizontal: 24.0),
-                                                        child: pw.Row(
-                                                          mainAxisAlignment:
-                                                              pw.MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            pw.Row(
-                                                              children: [
-                                                                pw.Text(
-                                                                  '${classlist[2]}',
-                                                                  style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(databold),
-                                                          fontSize:
-                                                            14,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),
-                                                      ),
-                                                                ),
-                                                                pw.Padding(
-                                                                  padding:
-                                                                      const pw.EdgeInsets.only(left: 24.0),
-                                                                  child: pw.Text(
-                                                                    '${classlist[3]}',
-                                                                    style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(databold),
-                                                          fontSize:
-                                                            14,
-                                                            color:PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF') ,
-                                                                    
-                                                                  ),
-                                                                ),
-                                                                )],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      pw.Divider(
-                                                        color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),
-                                                        thickness: 1,
-                                                        endIndent: 16,
-                                                        indent: 16,
-                                                      ),
-                                                      pw.Padding(
-                                                        padding: pw.EdgeInsets.symmetric(horizontal: 16),
-                                                        child: pw.Row(
-                                                          mainAxisAlignment:
-                                                              pw.MainAxisAlignment.spaceBetween,
-                                                          crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                                          children: [
-                                                            pw.Expanded(
-                                                              flex: 2,
-                                                              child: pw.Text(
-                                                                "Roll No.",
-                                                                style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color:PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF') ,),
-                                                              ),
-                                                            ),
-                                                            pw.Expanded(
-                                                              flex: 3,
-                                                              child: pw.Text(
-                                                                "Name",
-                                                               style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF') ,),
-                                                              ),
-                                                            ),
-                                                            pw.Expanded(
-                                                              flex: 3,
-                                                              child: pw.Text(
-                                                                "Email",
-                                                                style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF') ,),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      pw.Divider(
-                                                        color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),
-                                                        thickness: 1,
-                                                        endIndent: 16,
-                                                        indent: 16,
-                                                      ),
-                                                      for (int i = 0; i < classlist[4].length; i++)
+                                                pw.Container(
+                                                  color: PdfColor.fromHex(
+                                                      '#5754E6'),
+                                                  child: pw.Padding(
+                                                    padding:
+                                                        pw.EdgeInsets.symmetric(
+                                                            vertical: 16),
+                                                    child: pw.Column(
+                                                      children: [
                                                         pw.Padding(
-                                                          padding: pw.EdgeInsets.symmetric(horizontal: 16),
-                                                          child: pw.Column(
-                                                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                          padding: pw.EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      24.0),
+                                                          child: pw.Row(
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .spaceBetween,
                                                             children: [
                                                               pw.Row(
-                                                                mainAxisAlignment:
-                                                                    pw.MainAxisAlignment.spaceBetween,
-                                                                crossAxisAlignment:
-                                                                    pw.CrossAxisAlignment.center,
                                                                 children: [
-                                                                  pw.Expanded(
-                                                                    flex: 2,
-                                                                    child: pw.Text(
-                                                                      "${classlist[4][i]['user']['user']['username']}",
-                                                                      style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                  pw.Text(
+                                                                    '${classlist[2]}',
+                                                                    style: pw
+                                                                        .TextStyle(
+                                                                      font: pw.Font
+                                                                          .ttf(
+                                                                              databold),
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: PdfColor
+                                                                          .fromHex(
+                                                                              '#FFFFFF'),
                                                                     ),
                                                                   ),
-                                                                  pw.Expanded(
-                                                                    flex: 3,
-                                                                    child: pw.Text(
-                                                                      "${classlist[4][i]['user']['user']['firstName']} ${classlist[4][i]['user']['user']['lastName']}",
-                                                                      style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color:PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF') ,),
+                                                                  pw.Padding(
+                                                                    padding: const pw
+                                                                            .EdgeInsets.only(
+                                                                        left:
+                                                                            24.0),
+                                                                    child:
+                                                                        pw.Text(
+                                                                      '${classlist[3]}',
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        font: pw.Font.ttf(
+                                                                            databold),
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: PdfColor.fromHex(
+                                                                            '#FFFFFF'),
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  pw.Expanded(
-                                                                    flex: 3,
-                                                                    child: pw.Text(
-                                                                      "${classlist[4][i]['user']['user']['email']}",
-                                                                      style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
-                                                                    ),
-                                                                  ),
+                                                                  )
                                                                 ],
                                                               ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        pw.Divider(
+                                                          color:
+                                                              PdfColor.fromHex(
+                                                                  '#FFFFFF'),
+                                                          thickness: 1,
+                                                          endIndent: 16,
+                                                          indent: 16,
+                                                        ),
+                                                        pw.Padding(
+                                                          padding: pw.EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      16),
+                                                          child: pw.Row(
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .spaceBetween,
+                                                            crossAxisAlignment: pw
+                                                                .CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              pw.Expanded(
+                                                                flex: 2,
+                                                                child: pw.Text(
+                                                                  "Roll No.",
+                                                                  style: pw
+                                                                      .TextStyle(
+                                                                    font: pw.Font
+                                                                        .ttf(
+                                                                            data),
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: PdfColor
+                                                                        .fromHex(
+                                                                            '#FFFFFF'),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw.Text(
+                                                                  "Name",
+                                                                  style: pw
+                                                                      .TextStyle(
+                                                                    font: pw.Font
+                                                                        .ttf(
+                                                                            data),
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: PdfColor
+                                                                        .fromHex(
+                                                                            '#FFFFFF'),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw.Text(
+                                                                  "Email",
+                                                                  style: pw
+                                                                      .TextStyle(
+                                                                    font: pw.Font
+                                                                        .ttf(
+                                                                            data),
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: PdfColor
+                                                                        .fromHex(
+                                                                            '#FFFFFF'),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        pw.Divider(
+                                                          color:
+                                                              PdfColor.fromHex(
+                                                                  '#FFFFFF'),
+                                                          thickness: 1,
+                                                          endIndent: 16,
+                                                          indent: 16,
+                                                        ),
+                                                        for (int i = 0;
+                                                            i <
+                                                                classlist[4]
+                                                                    .length;
+                                                            i++)
+                                                          pw.Padding(
+                                                            padding: pw
+                                                                    .EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                            child: pw.Column(
+                                                              crossAxisAlignment:
+                                                                  pw.CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                pw.Row(
+                                                                  mainAxisAlignment: pw
+                                                                      .MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  crossAxisAlignment: pw
+                                                                      .CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    pw.Expanded(
+                                                                      flex: 2,
+                                                                      child: pw
+                                                                          .Text(
+                                                                        "${classlist[4][i]['user']['user']['username']}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              10,
+                                                                          color:
+                                                                              PdfColor.fromHex('#FFFFFF'),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    pw.Expanded(
+                                                                      flex: 3,
+                                                                      child: pw
+                                                                          .Text(
+                                                                        "${classlist[4][i]['user']['user']['firstName']} ${classlist[4][i]['user']['user']['lastName']}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              10,
+                                                                          color:
+                                                                              PdfColor.fromHex('#FFFFFF'),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    pw.Expanded(
+                                                                      flex: 3,
+                                                                      child: pw
+                                                                          .Text(
+                                                                        "${classlist[4][i]['user']['user']['email']}",
+                                                                        style: pw
+                                                                            .TextStyle(
+                                                                          font:
+                                                                              pw.Font.ttf(data),
+                                                                          fontSize:
+                                                                              10,
+                                                                          color:
+                                                                              PdfColor.fromHex('#FFFFFF'),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                                 pw.Divider(
-                                                                  color:PdfColor
-                                                          .fromHex(
-                                                              '#EDEDED'),
+                                                                  color: PdfColor
+                                                                      .fromHex(
+                                                                          '#EDEDED'),
                                                                   thickness: 1,
                                                                 ),
-                                                              
                                                                 pw.Column(
                                                                   children: [
                                                                     pw.Row(
-                                                                      mainAxisAlignment:
-                                                                          pw.MainAxisAlignment.spaceBetween,
-                                                                      crossAxisAlignment:
-                                                                          pw.CrossAxisAlignment.end,
+                                                                      mainAxisAlignment: pw
+                                                                          .MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                      crossAxisAlignment: pw
+                                                                          .CrossAxisAlignment
+                                                                          .end,
                                                                       children: [
                                                                         pw.Expanded(
-                                                                          flex: 4,
-                                                                          child: pw.Text(
+                                                                          flex:
+                                                                              4,
+                                                                          child:
+                                                                              pw.Text(
                                                                             "Quiz Name",
-                                                                            style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                         pw.Expanded(
-                                                                          flex: 4,
-                                                                          child: pw.Text(
+                                                                          flex:
+                                                                              4,
+                                                                          child:
+                                                                              pw.Text(
                                                                             "No. of Submissions Made",
-                                                                            style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                         pw.Expanded(
-                                                                          flex: 2,
-                                                                          child: pw.Text(
+                                                                          flex:
+                                                                              2,
+                                                                          child:
+                                                                              pw.Text(
                                                                             "Marks",
-                                                                            style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                         pw.Expanded(
-                                                                          flex: 2,
-                                                                          child: pw.Text(
+                                                                          flex:
+                                                                              2,
+                                                                          child:
+                                                                              pw.Text(
                                                                             "Total Marks",
-                                                                            style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                            style:
+                                                                                pw.TextStyle(
+                                                                              font: pw.Font.ttf(data),
+                                                                              fontSize: 10,
+                                                                              color: PdfColor.fromHex('#FFFFFF'),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              pw.Divider(
-                                                                color: PdfColor
-                                                          .fromHex(
-                                                              '#6C69F4'),
-                                                                thickness: 1,
-                                                              ),
+                                                                pw.Divider(
+                                                                  color: PdfColor
+                                                                      .fromHex(
+                                                                          '#6C69F4'),
+                                                                  thickness: 1,
+                                                                ),
                                                                 for (int j = 0;
                                                                     j <
-                                                                        (classlist[4][i]['user']
-                                                                                    ['takesSet'][0]
-                                                                                ['quizzes'])
+                                                                        (classlist[4][i]['user']['takesSet'][0]['quizzes'])
                                                                             .length;
                                                                     j++)
-                                                                  if (classlist[4][i]['user']['takesSet']
-                                                                              [0]['quizzes'][j]['course']
-                                                                          ['courseId'] ==
-                                                                      classlist[0])
+                                                                  if (classlist[4][i]['user']['takesSet'][0]['quizzes'][j]
+                                                                              [
+                                                                              'course']
+                                                                          [
+                                                                          'courseId'] ==
+                                                                      classlist[
+                                                                          0])
                                                                     pw.Column(
                                                                       children: [
                                                                         pw.Row(
-                                                                          mainAxisAlignment:
-                                                                              pw.MainAxisAlignment
-                                                                                  .spaceBetween,
-                                                                          crossAxisAlignment:
-                                                                              pw.CrossAxisAlignment.start,
+                                                                          mainAxisAlignment: pw
+                                                                              .MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                          crossAxisAlignment: pw
+                                                                              .CrossAxisAlignment
+                                                                              .start,
                                                                           children: [
                                                                             pw.Expanded(
                                                                               flex: 4,
                                                                               child: pw.Text(
                                                                                 "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['quizName']}",
                                                                                 style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                                  font: pw.Font.ttf(data),
+                                                                                  fontSize: 10,
+                                                                                  color: PdfColor.fromHex('#FFFFFF'),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                             pw.Expanded(
@@ -909,13 +935,10 @@ class _FacCourseState extends State<FacCourse> {
                                                                               child: pw.Text(
                                                                                 "${find(i, j)} out of ${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['timesCanTake']}",
                                                                                 style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                                  font: pw.Font.ttf(data),
+                                                                                  fontSize: 10,
+                                                                                  color: PdfColor.fromHex('#FFFFFF'),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                             pw.Expanded(
@@ -923,13 +946,10 @@ class _FacCourseState extends State<FacCourse> {
                                                                               child: pw.Text(
                                                                                 "${findm(i, j)}",
                                                                                 style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                                  font: pw.Font.ttf(data),
+                                                                                  fontSize: 10,
+                                                                                  color: PdfColor.fromHex('#FFFFFF'),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                             pw.Expanded(
@@ -937,94 +957,78 @@ class _FacCourseState extends State<FacCourse> {
                                                                               child: pw.Text(
                                                                                 "${classlist[4][i]['user']['takesSet'][0]['quizzes'][j]['marks']}",
                                                                                 style: pw.TextStyle(
-                                                                    font:
-                                                          pw.Font.ttf(data),
-                                                          fontSize:
-                                                            10,
-                                                            color: PdfColor
-                                                          .fromHex(
-                                                              '#FFFFFF'),),
+                                                                                  font: pw.Font.ttf(data),
+                                                                                  fontSize: 10,
+                                                                                  color: PdfColor.fromHex('#FFFFFF'),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
                                                                         ),
                                                                       ],
                                                                     ),
-                                                              
                                                                 pw.Divider(
                                                                   color: PdfColor
-                                                          .fromHex(
-                                                              '#EDEDED'),
+                                                                      .fromHex(
+                                                                          '#EDEDED'),
                                                                   thickness: 1,
                                                                 ),
-                                                            ],
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              )
+                                                )
+                                              ];
+                                            },
+                                          ),
+                                        );
+                                        if (kIsWeb) {
+                                          final output = '${classlist[0]}';
+                                          await FileSaver.instance.saveFile(
+                                              output, await pdf.save(), 'pdf',
+                                              mimeType: MimeType.PDF);
+                                        } else {
+                                          final output =
+                                              await getTemporaryDirectory();
 
-                                            ];
+                                          final file = File(
+                                              '${output.path}\\${classlist[0]}.pdf');
+                                          await file
+                                              .writeAsBytes(await pdf.save());
 
-                                              },
-                                            ),
-                                          );
-                                          if (kIsWeb) {
-                                            final output =
-                                                '${classlist[0]}';
-                                            await FileSaver.instance.saveFile(
-                                                output,
-                                                await pdf.save(),
-                                                'pdf',
-                                                mimeType: MimeType.PDF);
-                                          } else {
-                                            final output =
-                                                await getTemporaryDirectory();
-
-                                            final file = File(
-                                                '${output.path}\\${classlist[0]}.pdf');
-                                            await file.writeAsBytes(
-                                                await pdf.save());
-
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                                    duration:
-                                                        Duration(seconds: 10),
-                                                    elevation: 2,
-                                                    backgroundColor: kMatte,
-                                                    content: SelectableText(
-                                                      'The Report has been saved in ${output.path}\\${classlist[0]}.pdf',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2
-                                                          .copyWith(
-                                                              color: kFrost),
-                                                    )
-                                                    )
-                                                    );
-                                          }
-                                    }
-                                    catch(exception)
-                                    {
-                                      ScaffoldMessenger.of(context)
+                                          ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   duration:
                                                       Duration(seconds: 10),
                                                   elevation: 2,
                                                   backgroundColor: kMatte,
                                                   content: SelectableText(
-                                                    'There was some error in downloadinf the file. $exception',
+                                                    'The Report has been saved in ${output.path}\\${classlist[0]}.pdf',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodyText2
                                                         .copyWith(
                                                             color: kFrost),
                                                   )));
-                                    }
-                                  },
+                                        }
+                                      } catch (exception) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                duration: Duration(seconds: 10),
+                                                elevation: 2,
+                                                backgroundColor: kMatte,
+                                                content: SelectableText(
+                                                  'There was some error in downloadinf the file. $exception',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText2
+                                                      .copyWith(color: kFrost),
+                                                )));
+                                      }
+                                    },
                                   )
-                                  
                                 ],
                               ),
                             ),
