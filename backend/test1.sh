@@ -1,2 +1,2 @@
 c#!/bin/bash
-ddocker-compose --version
+docker-compose --version
