@@ -10,9 +10,7 @@ WORKDIR /app
 COPY requirements.txt /app
 # runs the pip install command for all packages listed in the requirements.txt file
 RUN pip install -r requirements.txt
-RUN adduser --disabled-password --no-create-home django-user
 
-USER djano-user 
 
 COPY . /app/
 # CMD ["cd","/quizter/"]
