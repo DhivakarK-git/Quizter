@@ -26,10 +26,9 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = 'ebx!yw1%qfz-pqqxu(*zbi6iotr$39&v)c$g3!36r(9b#$_*t%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG',0)))
+DEBUG = True
 
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -64,8 +63,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_COOKIE_SECURE = False
-
 ROOT_URLCONF = 'quizter.urls'
 
 TEMPLATES = [
@@ -89,25 +86,13 @@ WSGI_APPLICATION = 'quizter.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DB_PATH = os.path.join(BASE_DIR, 'db.sqlite3')
-# try:
-#     from shutil import copyfile
-#     DB_PATH = "/tmp/db.sqlite3"
-#     copyfile(os.path.join(BASE_DIR, 'db.sqlite3'), DB_PATH)
-# except:
-#     pass
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_PATH,
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 
 GRAPHENE = {
@@ -173,17 +158,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-
 STATIC_URL = '/static/'
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-import mimetypes
-mimetypes.add_type("text/css", ".css", True)
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True

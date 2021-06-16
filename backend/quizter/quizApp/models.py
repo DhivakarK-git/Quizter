@@ -47,7 +47,7 @@ class Teaches(models.Model):
 		return ""
 	def clean(self):
 		if(str(self.user.type) == 'faculty'):
-			return
+			pass
 		else:
 			raise ValidationError("Not a Faculty")
 
@@ -72,7 +72,7 @@ class Belongs(models.Model):
 		unique_together = ('user', 'clas',)
 	def clean(self):
 		if(str(self.user.type) == 'student'):
-			return
+			pass
 		else:
 			raise ValidationError("Not a student")
 
@@ -181,7 +181,7 @@ class Takes(models.Model):
                                        MaxValueValidator(500)])
 	def clean(self):
 		if(str(self.user.type) == 'student'):
-			return
+			pass
 		else:
 			raise ValidationError("Not a student")
 	class Meta:
@@ -210,7 +210,7 @@ class Makes(models.Model):
 	user = models.ForeignKey(UserT, on_delete=models.DO_NOTHING, default=None)
 	def clean(self):
 		if(str(self.user.type) == 'faculty'):
-			return
+			pass
 		else:
 			raise ValidationError("Not a faculty")
 	class Meta:
