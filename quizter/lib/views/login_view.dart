@@ -14,7 +14,7 @@ import 'package:quizter/screens/student/s_dash_screen.dart';
 import 'package:quizter/screens/login_screen.dart';
 
 class LoginView {
-  final _url = 'http://admin.quizter.codes/admin/';
+  final _url = 'http://127.0.0.1:8000/admin/';
   GraphQLClient _data;
   GraphQueries gq = new GraphQueries();
   AuthGraphQL _ag;

@@ -1,7 +1,7 @@
 import 'package:graphql/client.dart';
 
 class GraphQL {
-  final baseURL = 'http://admin.quizter.codes/graphql/';
+  final baseURL = 'http://127.0.0.1:8000/graphql/';
 
   GraphQLClient getClient() => GraphQLClient(
         cache: GraphQLCache(),
